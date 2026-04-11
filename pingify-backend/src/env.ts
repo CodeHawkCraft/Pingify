@@ -22,7 +22,9 @@ const env = {
   DB_NAME: getEnv("DB_NAME"),
   PORT:getEnv("PORT"),
   JWT_SECRET: getEnv("JWT_SECRET"),
-  NODE_ENV:getEnv("NODE_ENV")
+  NODE_ENV:getEnv("NODE_ENV"),
+  REDIS_URL:getEnv("REDIS_URL"),
+  REDIS_STREAM_NAME:getEnv("REDIS_STREAM_NAME")
 };
 
 export default env;

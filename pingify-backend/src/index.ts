@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import env from "./env.ts";
 import appRouter from "./routes.ts";
 import { errorHandler } from "./middlewares/error.middleware.ts";
+import "./services/pusher.service.ts";
 
 const app = express();
 const PORT = env.PORT || 3000;
