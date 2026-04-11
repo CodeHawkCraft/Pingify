@@ -7,7 +7,12 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "generate-types": "tsx src/database/generate-types.ts"
+    "generate-types": "tsx src/database/generate-types.ts",
+    "migrate:make": "npx knex migrate:make --knexfile src/knexfile.ts",
+    "migrate:latest": "npx knex migrate:latest --knexfile src/knexfile.ts",
+    "migrate:rollback": "npx knex migrate:rollback --knexfile src/knexfile.ts",
+    "seed:make": "npx knex seed:make --knexfile src/knexfile.ts",
+    "seed:run": "npx knex seed:run --knexfile src/knexfile.ts"
   },
   "keywords": [],
   "author": "",
