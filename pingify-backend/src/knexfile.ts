@@ -1,5 +1,9 @@
 import type { Knex } from "knex";
-import env from "./src/env.ts";
+import path from "path";
+import { fileURLToPath } from "url";
+import env from "./env.ts";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const config: { [key: string]: Knex.Config } = {
   development: {
@@ -12,11 +16,11 @@ const config: { [key: string]: Knex.Config } = {
       database: env.DB_NAME,
     },
     migrations: {
-      directory: "./src/database/migrations",
+      directory: path.resolve(__dirname, "database/migrations"),
       tableName: "knex_migrations",
     },
     seeds: {
-      directory: "./src/database/seeds",
+      directory: path.resolve(__dirname, "database/seeds"),
     },
   },
 
@@ -34,11 +38,11 @@ const config: { [key: string]: Knex.Config } = {
       max: 10,
     },
     migrations: {
-      directory: "./src/database/migrations",
+      directory: path.resolve(__dirname, "database/migrations"),
       tableName: "knex_migrations",
     },
     seeds: {
-      directory: "./src/database/seeds",
+      directory: path.resolve(__dirname, "database/seeds"),
     },
   },
 };

@@ -1,5 +1,10 @@
 import dotenv from "dotenv";
-dotenv.config();
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 function getEnv(key:string) {
   const value = process.env[key];
@@ -15,6 +20,7 @@ const env = {
   DB_USER: getEnv("DB_USER"),
   DB_PASSWORD: getEnv("DB_PASSWORD"),
   DB_NAME: getEnv("DB_NAME"),
+  PORT:getEnv("PORT")
 };
 
 export default env;
