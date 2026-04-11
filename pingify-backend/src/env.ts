@@ -20,7 +20,9 @@ const env = {
   DB_USER: getEnv("DB_USER"),
   DB_PASSWORD: getEnv("DB_PASSWORD"),
   DB_NAME: getEnv("DB_NAME"),
-  PORT:getEnv("PORT")
+  PORT:getEnv("PORT"),
+  JWT_SECRET: getEnv("JWT_SECRET"),
+  NODE_ENV:getEnv("NODE_ENV")
 };
 
 export default env;

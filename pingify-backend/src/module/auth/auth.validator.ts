@@ -14,3 +14,10 @@ export const signupSchema = z.object({
 });
 
 export type SignupInput = z.infer<typeof signupSchema>;
+
+export const loginSchema = z.object({
+  username: z.string().trim().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export type LoginInput = z.infer<typeof loginSchema>;
