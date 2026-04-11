@@ -14,6 +14,6 @@ export async function createWebsite(
 ): Promise<WebsiteResponse> {
   const [website] = await db(TABLES.WEBSITES)
     .insert({ url, user_id: userId })
-    .returning(["id", "url", "user_id", "created_at"]);
+    .returning(["id", "url", "created_at"]);
   return website;
 }
