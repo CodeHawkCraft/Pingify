@@ -1,5 +1,5 @@
 import type { Knex } from "knex";
-import { TABLES } from "../db.js";
+import { TABLES } from "../db.ts";
 
 export function up(knex: Knex) {
   return knex.schema.createTable(TABLES.WEBSITES, (table) => {
