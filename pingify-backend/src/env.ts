@@ -24,7 +24,8 @@ const env = {
   JWT_SECRET: getEnv("JWT_SECRET"),
   NODE_ENV:getEnv("NODE_ENV"),
   REDIS_URL:getEnv("REDIS_URL"),
-  REDIS_STREAM_NAME:getEnv("REDIS_STREAM_NAME")
+  REDIS_STREAM_NAME:getEnv("REDIS_STREAM_NAME"),
+  FRONTEND_URL:getEnv("FRONTEND_URL")
 };
 
 export default env;
