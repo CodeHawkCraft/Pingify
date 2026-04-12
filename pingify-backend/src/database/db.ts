@@ -1,9 +1,12 @@
 import knex from "knex";
 import config from "../knexfile.ts";
+import env from "../env.ts";
+
 export const TABLES = {
   USERS: "users",
   WEBSITES: "websites",
   PING_LOGS: "ping_logs"
 } as const;
 
-export const db = knex(config.development!);
+const environment = env.NODE_ENV || "development";
+export const db = knex(config[environment]);
