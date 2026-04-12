@@ -10,6 +10,12 @@ async function pushWebsitesToRedisStream() {
     await redisClient.xAdd(env.REDIS_STREAM_NAME, "*", {
       website_id: website.id,
       url: website.url,
+    }, {
+      TRIM: {
+        strategy: "MAXLEN",
+        strategyModifier: "~",
+        threshold: 10000,
+      },
     });
   }
 }
