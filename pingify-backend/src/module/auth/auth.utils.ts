@@ -1,8 +1,15 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import type { CookieOptions } from "express";
 import env from "../../env.ts";
 
 const SALT_ROUNDS = 10;
+
+export const AUTH_COOKIE_OPTIONS: CookieOptions = {
+  httpOnly: true,
+  secure: env.NODE_ENV === "production",
+  sameSite: "strict",
+};
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, SALT_ROUNDS);
