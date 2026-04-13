@@ -36,7 +36,7 @@ export const MainSection = () => {
   const navigate = useNavigate();
 
   return (
-    <main className="flex-1 flex flex-col items-center justify-center px-6 py-28 text-center">
+    <main className="flex-1 flex flex-col items-center justify-center px-6 py-6 text-center">
       <h1 className="text-5xl font-bold mb-5 max-w-lg">
         Know when your <span className="text-primary">website goes down</span>
       </h1>
