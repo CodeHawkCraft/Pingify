@@ -83,14 +83,57 @@ async function readConsumer(consumerName: string) {
   }
 }
 
+const PENDING_IDLE_TIME_MS = 60_000; // claim messages idle for 60+ seconds
+const PENDING_RECOVERY_INTERVAL_MS = 30_000; // check every 30 seconds
 
+async function recoverPendingMessages(consumerName: string) {
+  let cursor = "0-0";
+
+  do {
+    const result = await redisClient.xAutoClaim(
+      env.REDIS_STREAM_NAME,
+      env.REDIS_GROUP_NAME,
+      consumerName,
+      PENDING_IDLE_TIME_MS,
+      cursor,
+      { COUNT: 50 },
+    );
+
+    cursor = result.nextId;
+
+    for (const message of result.messages as (StreamMessage | null)[]) {
+      if (!message) continue;
+      const { website_id, url } = message.message;
+
+      await pingWebsite(website_id, url);
+      console.log(
+        `[${consumerName}] Recovered pending: ${url} (website_id: ${website_id})`,
+      );
+      await redisClient.xAck(
+        env.REDIS_STREAM_NAME,
+        env.REDIS_GROUP_NAME,
+        message.id,
+      );
+    }
+  } while (cursor !== "0-0");
+}
+
+function startPendingRecovery(consumerName: string) {
+  setInterval(async () => {
+    try {
+      await recoverPendingMessages(consumerName);
+    } catch (err) {
+      console.error(`[${consumerName}] Pending recovery error:`, err);
+    }
+  }, PENDING_RECOVERY_INTERVAL_MS);
+}
 
 export async function startWorkers() {
-
   const consumers = [
     env.REDIS_CONSUMER_1,
     env.REDIS_CONSUMER_2,
     env.REDIS_CONSUMER_3,
+    env.REDIS_CONSUMER_4,
   ];
 
   console.log(
@@ -98,4 +141,7 @@ export async function startWorkers() {
   );
 
   consumers.forEach((name) => readConsumer(name));
+
+  // Start pending message recovery on the first consumer
+  startPendingRecovery(consumers[3]);
 }
