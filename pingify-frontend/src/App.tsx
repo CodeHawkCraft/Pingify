@@ -1,9 +1,10 @@
+import { Routes, Route } from "react-router-dom";
+import Home from "./Home";
 const App = () => {
   return (
-    <div className="bg-red-500">
-      App
-      <button className="btn">Default</button>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+    </Routes>
   );
 };
 
