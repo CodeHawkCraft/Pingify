@@ -48,7 +48,10 @@ export const MainSection = () => {
         <button onClick={() => navigate("/signup")} className="btn btn-primary">
           Start monitoring — it's free
         </button>
-        <button onClick={() => navigate("/login")} className="btn btn-ghost">
+        <button
+          onClick={() => navigate("/login")}
+          className="btn btn-secondary"
+        >
           Log in
         </button>
       </div>

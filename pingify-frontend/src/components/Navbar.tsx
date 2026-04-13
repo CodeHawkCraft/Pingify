@@ -14,7 +14,7 @@ export const Navbar = () => {
       <div className="flex gap-4">
         <button
           onClick={() => navigate("/login")}
-          className="btn btn-ghost btn-sm"
+          className="btn btn-secondary btn-sm"
         >
           Log in
         </button>
