@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
-import { signupSchema } from "../validations/auth.validation";
-import { signup } from "../api/auth.api";
+import { loginSchema } from "../validations/auth.validation";
+import { login } from "../api/auth.api";
 import { useUser } from "../context/UserContext";
 import { AuthForm } from "../components/AuthForm";
 import type { AuthPayload } from "../types/auth.types";
 
-export function Signup() {
+export function Login() {
   const navigate = useNavigate();
   const { setUser } = useUser();
   const [loading, setLoading] = useState(false);
@@ -18,13 +18,13 @@ export function Signup() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: yupResolver(signupSchema),
+    resolver: yupResolver(loginSchema),
   });
 
   const onSubmit = async (data: AuthPayload) => {
     try {
       setLoading(true);
-      const user = await signup({
+      const user = await login({
         username: data.username,
         password: data.password,
       });
@@ -40,10 +40,8 @@ export function Signup() {
     <div className="h-screen flex flex-col items-center justify-center">
       <div className="w-full max-w-sm flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-bold">Create Account</h2>
-          <p className="text-sm opacity-75">
-            Sign up to get started with Pingify
-          </p>
+          <h2 className="text-3xl font-bold">Welcome back</h2>
+          <p className="text-sm opacity-75">Log in to your Pingify account</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
@@ -56,19 +54,19 @@ export function Signup() {
             {loading ? (
               <span className="loading loading-spinner loading-sm" />
             ) : (
-              "Sign Up"
+              "Log in"
             )}
           </button>
         </form>
 
         <p className="text-center text-sm opacity-75">
-          Already have an account?{" "}
+          Don't have an account?{" "}
           <button
             type="button"
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/signup")}
             className="link link-primary font-semibold"
           >
-            Log in
+            Sign up
           </button>
         </p>
       </div>

@@ -4,12 +4,7 @@ export interface UserData {
   created_at: string;
 }
 
-export interface SignupPayload {
-  username: string;
-  password: string;
-}
-
-export interface LoginPayload {
+export interface AuthPayload {
   username: string;
   password: string;
 }

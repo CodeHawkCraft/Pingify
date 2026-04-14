@@ -1,14 +1,14 @@
 import axiosInstance from "./axios";
 import { apiHandler } from "./api-handler";
-import type { SignupPayload, LoginPayload, UserData } from "../types/auth.types";
+import type { UserData, AuthPayload } from "../types/auth.types";
 
-export const signup = (payload: SignupPayload) =>
+export const signup = (payload: AuthPayload) =>
   apiHandler<UserData>(() => axiosInstance.post("/auth/signup", payload), {
     showSuccessToast: true,
     showErrorToast: true,
   });
 
-export const login = (payload: LoginPayload) =>
+export const login = (payload: AuthPayload) =>
   apiHandler<UserData>(() => axiosInstance.post("/auth/login", payload), {
     showSuccessToast: true,
     showErrorToast: true,
