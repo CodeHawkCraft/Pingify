@@ -29,7 +29,7 @@ export function Login() {
         password: data.password,
       });
       setUser(user);
-      navigate("/");
+      navigate("/dashboard");
     } catch {
     } finally {
       setLoading(false);

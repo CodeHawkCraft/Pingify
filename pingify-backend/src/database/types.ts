@@ -4,6 +4,7 @@
 export enum Table {
   KnexMigrations = "knex_migrations",
   KnexMigrationsLock = "knex_migrations_lock",
+  PingLogs = "ping_logs",
   Users = "users",
   Websites = "websites",
 }
@@ -11,6 +12,7 @@ export enum Table {
 export type Tables = {
   "knex_migrations": KnexMigrations,
   "knex_migrations_lock": KnexMigrationsLock,
+  "ping_logs": PingLogs,
   "users": Users,
   "websites": Websites,
 };
@@ -27,6 +29,16 @@ export type KnexMigrationsLock = {
   is_locked: number | null;
 };
 
+export type PingLogs = {
+  id: string;
+  website_id: string;
+  status_code: number | null;
+  response_time_ms: number | null;
+  status: string;
+  error: string | null;
+  pinged_at: Date;
+};
+
 export type Users = {
   id: string;
   username: string;
@@ -40,5 +52,6 @@ export type Websites = {
   user_id: string;
   created_at: Date | null;
   updated_at: Date | null;
+  next_ping_at: Date;
 };
 

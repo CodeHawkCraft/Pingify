@@ -3,32 +3,50 @@ import type { Websites } from "../database/types.ts";
 import redisClient from "../database/redis.ts";
 import env from "../env.ts";
 
-async function pushWebsitesToRedisStream() {
+const BATCH_SIZE = 1000;
+const INTERVAL_SECONDS = 3;
+
+async function schedulerTick() {
   try {
-    const websites = await db<Websites>(TABLES.WEBSITES).select("*");
+    const websites = await db<Websites>(TABLES.WEBSITES)
+      .where("next_ping_at", "<=", db.fn.now())
+      .orderBy("next_ping_at", "asc")
+      .limit(BATCH_SIZE)
+      .select("id", "url");
+
+    if (websites.length === 0) return;
 
     const results = await Promise.allSettled(
       websites.map((website) =>
         redisClient.xAdd(env.REDIS_STREAM_NAME, "*", {
           website_id: website.id,
           url: website.url,
-        }, {
-          TRIM: {
-            strategy: "MAXLEN",
-            strategyModifier: "~",
-            threshold: 10000,
-          },
         })
-      )
+      ),
     );
 
-    const failed = results.filter((r) => r.status === "rejected");
-    if (failed.length > 0) {
-      console.error(`Failed to push ${failed.length}/${websites.length} websites to stream`);
+    const successfulIds: string[] = [];
+    results.forEach((result, index) => {
+      if (result.status === "fulfilled") {
+        successfulIds.push(websites[index].id);
+      } else {
+        console.error(`Failed to push website ${websites[index].id}:`, result.reason);
+      }
+    });
+
+    if (successfulIds.length > 0) {
+      await db<Websites>(TABLES.WEBSITES)
+        .whereIn("id", successfulIds)
+        .update({
+          next_ping_at: db.raw(`NOW() + INTERVAL '${INTERVAL_SECONDS} seconds'`),
+          updated_at: db.fn.now(),
+        });
     }
+
+    console.log(`Scheduled ${successfulIds.length}/${websites.length} websites`);
   } catch (err) {
-    console.error("Failed to push websites to Redis stream:", err);
+    console.error("Scheduler error:", err);
   }
 }
 
-setInterval(pushWebsitesToRedisStream, 3000);
+setInterval(schedulerTick, 1000);
