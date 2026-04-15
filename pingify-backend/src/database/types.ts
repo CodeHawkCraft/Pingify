@@ -48,6 +48,7 @@ export type Users = {
 
 export type Websites = {
   id: string;
+  name: string;
   url: string;
   user_id: string;
   created_at: Date | null;

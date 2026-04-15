@@ -3,9 +3,10 @@ import { TABLES } from "../db.ts";
 
 const INTERVAL_SECONDS = 3;
 
-export function up(knex: Knex) {
-  return knex.schema.createTable(TABLES.WEBSITES, (table) => {
+export async function up(knex: Knex) {
+  await knex.schema.createTable(TABLES.WEBSITES, (table) => {
     table.uuid("id").primary().defaultTo(knex.fn.uuid());
+    table.string("name", 255).notNullable();
     table.string("url", 2048).notNullable();
     table
       .uuid("user_id")
@@ -26,6 +27,10 @@ export function up(knex: Knex) {
 
     table.unique(["url", "user_id"]);
   });
+  // Case-insensitive unique name per user — knex doesn't support functional indexes natively
+  await knex.raw(
+    "CREATE UNIQUE INDEX websites_lower_name_user_id_unique ON websites (lower(name), user_id)",
+  );
 }
 
 export function down(knex: Knex) {

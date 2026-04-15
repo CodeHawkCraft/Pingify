@@ -7,7 +7,7 @@ import { authenticate } from "./middlewares/auth.middleware.ts";
 const appRouter = Router();
 
 appRouter.use("/auth", authRouter);
-appRouter.use("/websites",authenticate, websiteRouter);
+appRouter.use("/monitors", authenticate, websiteRouter);
 appRouter.use("/users",authenticate, usersRouter);
 
 export default appRouter;
