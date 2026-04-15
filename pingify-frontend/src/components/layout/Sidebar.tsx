@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Activity, Bell, BarChart2, Settings } from "lucide-react";
+import { LayoutDashboard, Activity } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { logout } from "../../api/auth.api";
 
@@ -14,10 +14,9 @@ const navItems = [
 ];
 
 const Sidebar = ({ open, onClose }: SidebarProps) => {
-  const { user, setUser } = useUser();
+  const { setUser } = useUser();
   const navigate = useNavigate();
 
-  console.log("open or not -----> ",open)
 
   const handleLogout = async () => {
     await logout();
