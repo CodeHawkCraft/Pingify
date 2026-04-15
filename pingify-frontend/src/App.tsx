@@ -6,6 +6,7 @@ import { ProtectedRoute } from "./routes/ProtectedRoute";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import { DashboardPage } from "./pages/DashboardPage";
 import { useUser } from "./context/UserContext";
+import { AddWebsiteForm } from "./components/AddWebsiteForm";
 
 const App = () => {
   const { isLoading } = useUser();
@@ -27,6 +28,7 @@ const App = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/monitors" element={<AddWebsiteForm />} />
         </Route>
       </Route>
     </Routes>
