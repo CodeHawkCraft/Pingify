@@ -19,3 +19,9 @@ export const logout = () =>
     showSuccessToast: true,
     showErrorToast: true,
   });
+
+export const getMe = () =>
+  apiHandler<UserData>(() => axiosInstance.get("/users/me"), {
+    showSuccessToast: false,
+    showErrorToast: false,
+  });
