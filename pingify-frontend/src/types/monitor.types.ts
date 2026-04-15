@@ -9,3 +9,15 @@ export interface Monitor {
   url: string;
   created_at: string;
 }
+
+export interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface MonitorListResponse {
+  data: Monitor[];
+  pagination: Pagination;
+}

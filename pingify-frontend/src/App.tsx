@@ -7,6 +7,7 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import { DashboardPage } from "./pages/DashboardPage";
 import { useUser } from "./context/UserContext";
 import { AddWebsiteForm } from "./components/AddWebsiteForm";
+import { WebsitesPage } from "./pages/WebsitesPage";
 
 const App = () => {
   const { isLoading } = useUser();
@@ -28,7 +29,8 @@ const App = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/monitors" element={<AddWebsiteForm />} />
+          <Route path="/monitors" element={<AddWebsiteForm />} />
+          <Route path="/websites" element={<WebsitesPage />} />
         </Route>
       </Route>
     </Routes>

@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Activity } from "lucide-react";
+import { LayoutDashboard, Activity, Globe } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { logout } from "../../api/auth.api";
 
@@ -11,6 +11,7 @@ type SidebarProps = {
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/monitors", icon: Activity, label: "Monitors" },
+  { to: "/websites", icon: Globe, label: "Websites" },
 ];
 
 const Sidebar = ({ open, onClose }: SidebarProps) => {
