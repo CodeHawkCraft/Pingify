@@ -1,6 +1,12 @@
 import axiosInstance from "./axios";
 import { apiHandler } from "./api-handler";
-import type { AddMonitorPayload, Monitor, MonitorListResponse } from "../types/monitor.types";
+import type {
+  AddMonitorPayload,
+  Monitor,
+  MonitorListResponse,
+  MonitorLogsQuery,
+  MonitorLogsResponse,
+} from "../types/monitor.types";
 
 export const addMonitor = (payload: AddMonitorPayload) =>
   apiHandler<Monitor>(() => axiosInstance.post("/monitors", payload), {
@@ -11,5 +17,14 @@ export const addMonitor = (payload: AddMonitorPayload) =>
 export const getMonitors = (page = 1, limit = 20) =>
   apiHandler<MonitorListResponse>(
     () => axiosInstance.get("/monitors", { params: { page, limit } }),
+    { showErrorToast: true },
+  );
+
+export const getMonitorLogs = (
+  websiteId: string,
+  params: MonitorLogsQuery = {},
+) =>
+  apiHandler<MonitorLogsResponse>(
+    () => axiosInstance.get(`/monitors/${websiteId}/logs`, { params }),
     { showErrorToast: true },
   );

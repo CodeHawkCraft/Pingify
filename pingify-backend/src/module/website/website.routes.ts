@@ -8,6 +8,6 @@ const websiteRouter = Router();
 
 websiteRouter.get("/", asyncHandler(getWebsitesController));
 websiteRouter.post("/", validate(createWebsiteSchema), asyncHandler(createWebsiteController));
-websiteRouter.get("/:websiteId/logs", validateQuery(pingLogsQuerySchema), asyncHandler(getPingLogsController));
+websiteRouter.get("/:websiteId/logs", asyncHandler(getPingLogsController));
 
 export default websiteRouter;

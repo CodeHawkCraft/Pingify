@@ -8,6 +8,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { useUser } from "./context/UserContext";
 import { AddWebsiteForm } from "./components/AddWebsiteForm";
 import { WebsitesPage } from "./pages/WebsitesPage";
+import { WebsiteLogsPage } from "./pages/WebsiteLogsPage";
 
 const App = () => {
   const { isLoading } = useUser();
@@ -31,6 +32,7 @@ const App = () => {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/monitors" element={<AddWebsiteForm />} />
           <Route path="/websites" element={<WebsitesPage />} />
+          <Route path="/websites/:websiteId/logs" element={<WebsiteLogsPage />} />
         </Route>
       </Route>
     </Routes>

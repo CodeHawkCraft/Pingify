@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Globe, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Globe } from "lucide-react";
+import { Link } from "react-router-dom";
 import { getMonitors } from "../api/monitor.api";
 import type { Monitor, Pagination } from "../types/monitor.types";
 
@@ -11,7 +12,7 @@ export function WebsitesPage() {
 
   useEffect(() => {
     setIsLoading(true);
-    getMonitors(page, 1)
+    getMonitors(page, 10)
       .then((res) => {
         setMonitors(res.data);
         setPagination(res.pagination);
@@ -46,6 +47,7 @@ export function WebsitesPage() {
                   <th>Name</th>
                   <th>URL</th>
                   <th>Created</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -63,13 +65,22 @@ export function WebsitesPage() {
                       </a>
                     </td>
                     <td className="text-sm opacity-70">
-                      {new Date(m.created_at).toLocaleDateString("en-IN", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                        {new Date(m.created_at).toLocaleDateString("en-IN", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                    </td>
+                    <td>
+                      <Link
+                        to={`/websites/${m.id}/logs`}
+                        state={{ websiteName: m.name }}
+                        className="btn btn-sm btn-primary"
+                      >
+                        Show Logs
+                      </Link>
                     </td>
                   </tr>
                 ))}
