@@ -13,6 +13,46 @@ interface StreamEntry {
 }
 
 const PING_TIMEOUT_MS = 10_000;
+const BUFFER_FLUSH_SIZE = 100;
+const BUFFER_FLUSH_INTERVAL_MS = 1_000;
+
+interface PingLog {
+  website_id: string;
+  status: "up" | "down";
+  status_code?: number;
+  response_time_ms: number;
+  error?: string;
+}
+
+const pingLogBuffer: PingLog[] = [];
+let flushTimer: ReturnType<typeof setTimeout> | null = null;
+
+async function flushPingLogs() {
+  if (pingLogBuffer.length === 0) return;
+  const batch = pingLogBuffer.splice(0, pingLogBuffer.length);
+  await db(TABLES.PING_LOGS).insert(batch);
+}
+
+function scheduleFlush() {
+  if (flushTimer) return;
+  flushTimer = setTimeout(async () => {
+    flushTimer = null;
+    await flushPingLogs();
+  }, BUFFER_FLUSH_INTERVAL_MS);
+}
+
+function bufferPingLog(entry: PingLog) {
+  pingLogBuffer.push(entry);
+  if (pingLogBuffer.length >= BUFFER_FLUSH_SIZE) {
+    if (flushTimer) {
+      clearTimeout(flushTimer);
+      flushTimer = null;
+    }
+    flushPingLogs();
+  } else {
+    scheduleFlush();
+  }
+}
 
 async function pingWebsite(websiteId: string, url: string) {
   const start = Date.now();
@@ -37,20 +77,17 @@ async function pingWebsite(websiteId: string, url: string) {
       clearTimeout(timeout);
     }
 
-    const responseTimeMs = Date.now() - start;
-
-    await db(TABLES.PING_LOGS).insert({
+    bufferPingLog({
       website_id: websiteId,
       status_code: response.status,
-      response_time_ms: responseTimeMs,
+      response_time_ms: Date.now() - start,
       status: response.ok ? "up" : "down",
     });
   } catch (err) {
-    const responseTimeMs = Date.now() - start;
-    await db(TABLES.PING_LOGS).insert({
+    bufferPingLog({
       website_id: websiteId,
       status: "down",
-      response_time_ms: responseTimeMs,
+      response_time_ms: Date.now() - start,
       error: err instanceof Error ? err.message : "Unknown error",
     });
   }
