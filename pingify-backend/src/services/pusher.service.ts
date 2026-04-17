@@ -41,7 +41,7 @@ async function schedulerTick() {
         await trx<Websites>(TABLES.WEBSITES)
           .whereIn("id", successfulIds)
           .update({
-            next_ping_at: db.raw(`NOW() + INTERVAL '${INTERVAL_SECONDS} seconds'`),
+            next_ping_at: db.raw(`NOW() + INTERVAL '? seconds'`, [INTERVAL_SECONDS]),
             updated_at: db.fn.now(),
           });
       }
@@ -53,4 +53,9 @@ async function schedulerTick() {
   }
 }
 
-setInterval(schedulerTick, 1000);
+async function run() {
+  await schedulerTick();
+  setTimeout(run, 1000);
+}
+
+run();
