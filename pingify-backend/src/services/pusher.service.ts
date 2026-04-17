@@ -21,10 +21,12 @@ async function schedulerTick() {
 
       const results = await Promise.allSettled(
         websites.map((website) =>
-          redisClient.xAdd(env.REDIS_STREAM_NAME, "*", {
-            website_id: website.id,
-            url: website.url,
-          })
+          redisClient.xAdd(
+            env.REDIS_STREAM_NAME,
+            "*",
+            { website_id: website.id, url: website.url },
+            { TRIM: { strategy: "MAXLEN", threshold: 10_000 } },
+          )
         ),
       );
 
