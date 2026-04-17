@@ -20,11 +20,22 @@ async function pingWebsite(websiteId: string, url: string) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), PING_TIMEOUT_MS);
 
-    const response = await fetch(url, {
-      method: "HEAD",
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
+    let response;
+    try {
+      response = await fetch(url, {
+        method: "HEAD",
+        signal: controller.signal,
+      });
+
+      if (response.status === 405) {
+        response = await fetch(url, {
+          method: "GET",
+          signal: controller.signal,
+        });
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
 
     const responseTimeMs = Date.now() - start;
 
@@ -101,20 +112,16 @@ async function recoverPendingMessages(consumerName: string) {
 
     cursor = result.nextId;
 
-    for (const message of result.messages as (StreamMessage | null)[]) {
-      if (!message) continue;
-      const { website_id, url } = message.message;
+    const promises = (result.messages as (StreamMessage | null)[])
+      .filter((m): m is StreamMessage => m !== null)
+      .map(async (message) => {
+        const { website_id, url } = message.message;
+        await pingWebsite(website_id, url);
+        console.log(`[${consumerName}] Recovered pending: ${url} (website_id: ${website_id})`);
+        await redisClient.xAck(env.REDIS_STREAM_NAME, env.REDIS_GROUP_NAME, message.id);
+      });
 
-      await pingWebsite(website_id, url);
-      console.log(
-        `[${consumerName}] Recovered pending: ${url} (website_id: ${website_id})`,
-      );
-      await redisClient.xAck(
-        env.REDIS_STREAM_NAME,
-        env.REDIS_GROUP_NAME,
-        message.id,
-      );
-    }
+    await Promise.allSettled(promises);
   } while (cursor !== "0-0");
 }
 
@@ -133,7 +140,6 @@ export async function startWorkers() {
     env.REDIS_CONSUMER_1,
     env.REDIS_CONSUMER_2,
     env.REDIS_CONSUMER_3,
-    env.REDIS_CONSUMER_4,
   ];
 
   console.log(
@@ -143,5 +149,5 @@ export async function startWorkers() {
   consumers.forEach((name) => readConsumer(name));
 
   // Start pending message recovery on the first consumer
-  startPendingRecovery(consumers[3]);
+  startPendingRecovery(env.REDIS_CONSUMER_4);
 }
