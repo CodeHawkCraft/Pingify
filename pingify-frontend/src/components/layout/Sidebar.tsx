@@ -9,7 +9,7 @@ type SidebarProps = {
 };
 
 const navItems = [
-  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  // { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/monitors", icon: Activity, label: "Monitors" },
   { to: "/websites", icon: Globe, label: "Websites" },
 ];

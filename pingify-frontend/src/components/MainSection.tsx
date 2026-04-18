@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
 
 type Feature = {
   icon: string;
@@ -34,6 +35,7 @@ const FeatureCard = ({ icon, title, desc }: Feature) => (
 
 export const MainSection = () => {
   const navigate = useNavigate();
+  const { user } = useUser();
 
   return (
     <main className="flex-1 flex flex-col items-center justify-center px-6 py-6 text-center">
@@ -44,17 +46,41 @@ export const MainSection = () => {
         Pingify monitors your websites every few seconds and sends you an email
         the moment something goes wrong.
       </p>
-      <div className="flex flex-col sm:flex-row gap-3 justify-center mb-24">
-        <button onClick={() => navigate("/signup")} className="btn btn-primary">
-          Start monitoring — it's free
-        </button>
-        <button
-          onClick={() => navigate("/login")}
-          className="btn btn-secondary"
-        >
-          Log in
-        </button>
+      <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
+        {user ? (
+          <button onClick={() => navigate("/dashboard")} className="btn btn-primary">
+            Go to Dashboard
+          </button>
+        ) : (
+          <>
+            <button onClick={() => navigate("/signup")} className="btn btn-primary">
+              Start monitoring — it's free
+            </button>
+            <button onClick={() => navigate("/login")} className="btn btn-secondary">
+              Log in
+            </button>
+          </>
+        )}
       </div>
+
+      <div className="w-full max-w-5xl mb-10">
+        <p className="text-xs uppercase tracking-widest opacity-40 mb-3 font-semibold">
+          See it in action
+        </p>
+        <div className="rounded-2xl overflow-hidden shadow-2xl border border-base-300">
+          <video
+            src="https://res.cloudinary.com/djqoudrj1/video/upload/v1776540237/pingify_xg4pfy.mp4"
+            autoPlay
+            muted
+            loop
+            controls
+            controlsList="nodownload noremoteplayback"
+            disablePictureInPicture
+            className="w-full h-auto"
+          />
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl w-full">
         {FEATURES.map((feature) => (
           <FeatureCard key={feature.title} {...feature} />

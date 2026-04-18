@@ -29,7 +29,7 @@ export function Signup() {
         password: data.password,
       });
       setUser(user);
-      navigate("/");
+      navigate("/monitors");
     } catch {
     } finally {
       setLoading(false);
