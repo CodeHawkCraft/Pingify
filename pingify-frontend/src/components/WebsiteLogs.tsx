@@ -89,7 +89,7 @@ export function WebsiteLogs({ websiteId }: Props) {
             />
             <YAxis tick={{ fontSize: 11 }} />
             <Tooltip
-              formatter={(val: number) => [`${val} ms`, "Response time"]}
+              formatter={(val) => [`${val ?? "—"} ms`, "Response time"]}
               contentStyle={{
                 backgroundColor: "var(--color-base-200)",
                 borderRadius: "6px",

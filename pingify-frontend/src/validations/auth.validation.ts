@@ -1,7 +1,7 @@
 import * as yup from "yup";
-import type { SignupPayload, LoginPayload } from "../types/auth.types";
+import type { AuthPayload } from "../types/auth.types";
 
-export const signupSchema: yup.ObjectSchema<SignupPayload> = yup.object({
+export const signupSchema: yup.ObjectSchema<AuthPayload> = yup.object({
   username: yup
     .string()
     .trim()
@@ -19,7 +19,7 @@ export const signupSchema: yup.ObjectSchema<SignupPayload> = yup.object({
     .required("Password is required"),
 });
 
-export const loginSchema: yup.ObjectSchema<LoginPayload> = yup.object({
+export const loginSchema: yup.ObjectSchema<AuthPayload> = yup.object({
   username: yup
     .string()
     .trim()
