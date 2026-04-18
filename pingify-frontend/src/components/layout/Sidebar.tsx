@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Activity, Globe } from "lucide-react";
+import { Activity, Globe } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import { logout } from "../../api/auth.api";
 
