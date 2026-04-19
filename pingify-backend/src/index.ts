@@ -9,6 +9,7 @@ import "./services/pusher.service.ts";
 const app = express();
 const PORT = env.PORT || 3000;
 
+console.log("frontend url is ->",env.FRONTEND_URL);
 app.use(cors({
   origin: env.FRONTEND_URL,
   credentials: true,
