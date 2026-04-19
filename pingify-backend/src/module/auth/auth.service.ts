@@ -4,7 +4,7 @@ import type { UserResponse } from "./auth.types.ts";
 import { hashPassword, comparePassword, generateToken } from "./auth.utils.ts";
 import type { SignupInput, LoginInput } from "./auth.validator.ts";
 
-export async function signup(input: SignupInput): Promise<UserResponse> {
+export async function signup(input: SignupInput): Promise<{ user: UserResponse; token: string }> {
   const existingUser = await findUserByUsername(input.username);
   if (existingUser) {
     throw new ApiError(409, "Username already taken");
@@ -12,8 +12,9 @@ export async function signup(input: SignupInput): Promise<UserResponse> {
 
   const hashedPassword = await hashPassword(input.password);
   const user = await createUser(input.username, hashedPassword);
+  const token = generateToken({ id: user.id, username: user.username });
 
-  return user;
+  return { user, token };
 }
 
 export async function login(input: LoginInput): Promise<{ user: UserResponse; token: string }> {

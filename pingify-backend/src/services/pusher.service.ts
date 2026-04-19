@@ -8,6 +8,7 @@ const INTERVAL_SECONDS = 3;
 
 async function schedulerTick() {
   try {
+    return;
     await db.transaction(async (trx) => {
       const websites = await trx<Websites>(TABLES.WEBSITES)
         .where("next_ping_at", "<=", db.fn.now())
@@ -48,7 +49,11 @@ async function schedulerTick() {
           });
       }
 
-      console.log(`Scheduled ${successfulIds.length}/${websites.length} websites`);
+      const urls = websites
+        .filter((w) => successfulIds.includes(w.id))
+        .map((w) => w.url)
+        .join(", ");
+      console.log(`Scheduled ${successfulIds.length}/${websites.length} websites: ${urls}`);
     });
   } catch (err) {
     console.error("Scheduler error:", err);

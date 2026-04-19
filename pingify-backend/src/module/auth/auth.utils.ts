@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import type { CookieOptions } from "express";
+import type { CookieOptions, Response } from "express";
 import env from "../../env.ts";
 
 const SALT_ROUNDS = 10;
@@ -21,4 +21,11 @@ export async function comparePassword(password: string, hash: string): Promise<b
 
 export function generateToken(payload: { id: string; username: string }): string {
   return jwt.sign(payload, env.JWT_SECRET, { expiresIn: "7d" });
+}
+
+export function setTokenCookie(res: Response, token: string): void {
+  res.cookie("token", token, {
+    ...AUTH_COOKIE_OPTIONS,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
 }

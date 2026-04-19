@@ -1,20 +1,20 @@
 import type { Request, Response } from "express";
 import { successResponse } from "../../utils/api-response.ts";
 import { signup, login } from "./auth.service.ts";
-import { AUTH_COOKIE_OPTIONS } from "./auth.utils.ts";
+import { AUTH_COOKIE_OPTIONS, setTokenCookie } from "./auth.utils.ts";
 
 export async function signupController(req: Request, res: Response) {
-  const user = await signup(req.body);
+  const { user, token } = await signup(req.body);
+
+  setTokenCookie(res, token);
+
   res.status(201).json(successResponse(user, "User created successfully"));
 }
 
 export async function loginController(req: Request, res: Response) {
   const { user, token } = await login(req.body);
 
-  res.cookie("token", token, {
-    ...AUTH_COOKIE_OPTIONS,
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  });
+  setTokenCookie(res, token);
 
   res.json(successResponse(user, "Login successful"));
 }

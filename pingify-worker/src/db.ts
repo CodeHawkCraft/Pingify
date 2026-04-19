@@ -1,18 +1,12 @@
 import knex from "knex";
 import env from "./env.ts";
+import config from "./knexfile.ts";
 
 export const TABLES = {
   WEBSITES: "websites",
   PING_LOGS: "ping_logs",
 } as const;
 
-export const db = knex({
-  client: "pg",
-  connection: {
-    host: env.DB_HOST,
-    port: Number(env.DB_PORT),
-    user: env.DB_USER,
-    password: env.DB_PASSWORD,
-    database: env.DB_NAME,
-  },
-});
+const environment = env.NODE_ENV || "development";
+// console.log("enviroment", environment);
+export const db = knex(config[environment]);

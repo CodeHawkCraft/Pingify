@@ -9,4 +9,5 @@ export const TABLES = {
 } as const;
 
 const environment = env.NODE_ENV || "development";
+// console.log("enviroment", environment);
 export const db = knex(config[environment]);
