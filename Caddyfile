@@ -1,0 +1,5 @@
+# Caddy handles HTTPS: gets a Let's Encrypt cert for this domain, renews it,
+# and redirects http -> https. Everything else is still nginx's job.
+pingifyhub.duckdns.org {
+    reverse_proxy frontend:80
+}
