@@ -172,7 +172,22 @@ function startPendingRecovery(consumerName: string) {
   }, PENDING_RECOVERY_INTERVAL_MS);
 }
 
+// Nothing else creates the group, so a fresh Redis (every `docker compose up`
+// on a clean volume) would leave every xReadGroup failing with NOGROUP forever.
+async function ensureConsumerGroup() {
+  try {
+    await redisClient.xGroupCreate(env.REDIS_STREAM_NAME, env.REDIS_GROUP_NAME, "0", {
+      MKSTREAM: true,
+    });
+    console.log(`Created consumer group: ${env.REDIS_GROUP_NAME}`);
+  } catch (err) {
+    if (!(err instanceof Error) || !err.message.includes("BUSYGROUP")) throw err;
+  }
+}
+
 export async function startWorkers() {
+  await ensureConsumerGroup();
+
   const consumers = [
     env.REDIS_CONSUMER_1,
     env.REDIS_CONSUMER_2,

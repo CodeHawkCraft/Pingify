@@ -8,7 +8,9 @@ const SALT_ROUNDS = 10;
 export const AUTH_COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
   secure: env.NODE_ENV === "production",
-  sameSite: env.NODE_ENV === "production" ? "none" : "strict",
+  // Caddy puts the SPA and the API on one origin, so the cookie is never
+  // cross-site: "strict" holds everywhere and "none" is no longer needed.
+  sameSite: "strict",
 };
 
 export async function hashPassword(password: string): Promise<string> {
