@@ -8,7 +8,7 @@ const INTERVAL_SECONDS = 3;
 
 async function schedulerTick() {
   try {
-    return;
+    // return;
     await db.transaction(async (trx) => {
       const websites = await trx<Websites>(TABLES.WEBSITES)
         .where("next_ping_at", "<=", db.fn.now())
