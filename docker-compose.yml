@@ -42,7 +42,7 @@ services:
       REDIS_URL: redis://redis:6379
       REDIS_STREAM_NAME: pingify:pings
 
-      FRONTEND_URL: http://localhost:8080
+      FRONTEND_URL: https://pingifyhub.duckdns.org
     depends_on:
       postgres:
         condition: service_healthy
