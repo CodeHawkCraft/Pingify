@@ -8,7 +8,7 @@ const SALT_ROUNDS = 10;
 export const AUTH_COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
   secure: env.NODE_ENV === "production",
-  // Caddy puts the SPA and the API on one origin, so the cookie is never
+  // nginx puts the SPA and the API on one origin, so the cookie is never
   // cross-site: "strict" holds everywhere and "none" is no longer needed.
   sameSite: "strict",
 };
