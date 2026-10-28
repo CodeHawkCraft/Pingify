@@ -1,48 +1,30 @@
 services:
   postgres:
     image: postgres:17-alpine
-    environment:
-      POSTGRES_USER: pingify
-      POSTGRES_PASSWORD: pingify
-      POSTGRES_DB: pingify
-    ports:
-      - "5433:5432"
+    env_file: ./pingify-backend/.env
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pingify -d pingify"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 20
+    restart: unless-stopped
 
   redis:
     image: redis:8-alpine
-    ports:
-      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
       retries: 20
+    restart: unless-stopped
 
   backend:
     build: ./pingify-backend
-    environment:
-      # Use Docker service names instead of localhost.
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: pingify
-      DB_PASSWORD: pingify
-      DB_NAME: pingify
-
-      PORT: 3000
-      NODE_ENV: development
-      JWT_SECRET: 7f3c9a2e5d8b1f604c7a93e2f1d8b6a4
-
-      REDIS_URL: redis://redis:6379
-      REDIS_STREAM_NAME: pingify:pings
-
-      FRONTEND_URL: https://pingifyhub.duckdns.org
+    # Create/update tables on every start (no-op when already up to date).
+    command: sh -c "node node_modules/knex/bin/cli.js migrate:latest --knexfile dist/knexfile.js && node dist/index.js"
+    env_file: ./pingify-backend/.env
     depends_on:
       postgres:
         condition: service_healthy
@@ -52,26 +34,7 @@ services:
 
   worker:
     build: ./pingify-worker
-    environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: pingify
-      DB_PASSWORD: pingify
-      DB_NAME: pingify
-
-      PORT: 3002
-      NODE_ENV: development
-
-      REDIS_URL: redis://redis:6379
-      REDIS_STREAM_NAME: pingify:pings
-      REDIS_GROUP_NAME: pingify-workers
-
-      REDIS_CONSUMER_1: worker-1
-      REDIS_CONSUMER_2: worker-2
-      REDIS_CONSUMER_3: worker-3
-      REDIS_CONSUMER_4: worker-recovery
-    ports:
-      - "3002:3002"
+    env_file: ./pingify-worker/.env
     depends_on:
       postgres:
         condition: service_healthy
@@ -85,11 +48,11 @@ services:
     build:
       context: ./pingify-frontend
       # Vite puts this API URL directly into the frontend code when building the app.
-      # The browser then uses /api to call the backend.
+      # The browser then uses /api, and nginx forwards it to the backend.
       args:
         VITE_API_URL: /api
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       - backend
     restart: unless-stopped
