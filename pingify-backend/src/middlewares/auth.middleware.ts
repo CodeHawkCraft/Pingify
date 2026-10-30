@@ -1,22 +1,16 @@
 import type { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import env from "../env.ts";
+import { getAuth } from "@clerk/express";
 import { ApiError } from "../utils/api-error.ts";
-import { JwtPayload } from "../types/express.ts";
-
 
 export function authenticate(req: Request, _res: Response, next: NextFunction) {
-  const token = req.cookies?.token;
-
-  if (!token) {
+  if (!getAuth(req).userId) {
     return next(new ApiError(401, "Authentication required"));
   }
+  next();
+}
 
-  try {
-    const payload = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
-    req.user = payload;
-    next();
-  } catch {
-    next(new ApiError(401, "Invalid or expired token"));
-  }
+export function getUserId(req: Request): string {
+  const { userId } = getAuth(req);
+  if (!userId) throw new ApiError(401, "Authentication required");
+  return userId;
 }

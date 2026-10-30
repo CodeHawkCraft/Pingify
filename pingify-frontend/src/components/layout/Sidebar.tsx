@@ -1,7 +1,6 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { Activity, Globe } from "lucide-react";
-import { useUser } from "../../context/UserContext";
-import { logout } from "../../api/auth.api";
+import { useClerk } from "@clerk/react";
 
 type SidebarProps = {
   open: boolean;
@@ -15,15 +14,7 @@ const navItems = [
 ];
 
 const Sidebar = ({ open, onClose }: SidebarProps) => {
-  const { setUser } = useUser();
-  const navigate = useNavigate();
-
-
-  const handleLogout = async () => {
-    await logout();
-    setUser(null);
-    navigate("/");
-  };
+  const { signOut } = useClerk();
 
   return (
     <>
@@ -44,7 +35,7 @@ const Sidebar = ({ open, onClose }: SidebarProps) => {
         `}
       >
         <p className="text-base font-bold tracking-widest uppercase text-primary mb-6">
-          Pingify
+          Ping-Links
         </p>
 
         <nav className="flex flex-col gap-1 flex-1">
@@ -65,7 +56,7 @@ const Sidebar = ({ open, onClose }: SidebarProps) => {
           ))}
         </nav>
 
-          <button onClick={handleLogout} className="btn btn-ghost btn-sm justify-start">
+          <button onClick={() => signOut({ redirectUrl: "/" })} className="btn btn-ghost btn-sm justify-start">
             Logout
           </button>
       </aside>

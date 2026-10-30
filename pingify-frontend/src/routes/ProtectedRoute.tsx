@@ -1,12 +1,14 @@
+import { useAuth } from "@clerk/react";
 import { Navigate, Outlet } from "react-router-dom";
-import { useUser } from "../context/UserContext";
 
 export function ProtectedRoute() {
-  const { user } = useUser();
+  const { isLoaded, isSignedIn } = useAuth();
+  if (!isLoaded) return null;
+  return isSignedIn ? <Outlet /> : <Navigate to="/" replace />;
+}
 
-  if (!user) {
-    return <Navigate to="/" />;
-  }
-
-  return <Outlet />;
+export function SignedOutRoute() {
+  const { isLoaded, isSignedIn } = useAuth();
+  if (!isLoaded) return null;
+  return isSignedIn ? <Navigate to="/monitors" replace /> : <Outlet />;
 }

@@ -9,7 +9,7 @@ export async function up(knex: Knex) {
     table.string("name", 255).notNullable();
     table.string("url", 2048).notNullable();
     table
-      .uuid("user_id")
+      .string("user_id")
       .notNullable()
       .references("id")
       .inTable(TABLES.USERS)

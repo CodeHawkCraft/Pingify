@@ -1,12 +1,14 @@
 import type { Knex } from "knex";
 import { TABLES } from "../db.ts";
 
+// id is the Clerk user id (e.g. "user_2abc..."), synced by the Clerk webhook.
 export function up(knex: Knex) {
   return knex.schema.createTable(TABLES.USERS, (table) => {
-    table.uuid("id").primary().defaultTo(knex.fn.uuid());
-    table.string("username").notNullable().unique();
-    table.string("password").notNullable();
-    table.timestamp("created_at").notNullable().defaultTo(knex.fn.now());
+    table.string("id").primary();
+    table.string("first_name");
+    table.string("last_name");
+    table.string("email").unique();
+    table.timestamps(true, true);
   });
 }
 

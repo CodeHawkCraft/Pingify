@@ -16,7 +16,7 @@ const DashboardLayout = () => {
           <button onClick={() => setSidebarOpen(true)} className="btn">
             <Menu size={20} />
           </button>
-          <span className="text-sm font-semibold">Pingify</span>
+          <span className="text-sm font-semibold">Ping-Links</span>
         </header>
 
         <main className="flex-1 overflow-y-auto p-6">

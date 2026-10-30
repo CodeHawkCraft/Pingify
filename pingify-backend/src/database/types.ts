@@ -41,9 +41,11 @@ export type PingLogs = {
 
 export type Users = {
   id: string;
-  username: string;
-  password: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
   created_at: Date;
+  updated_at: Date;
 };
 
 export type Websites = {

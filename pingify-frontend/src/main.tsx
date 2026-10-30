@@ -3,16 +3,16 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.tsx";
-import { UserProvider } from "./context/UserContext.tsx";
+import { ClerkProviderWithRouter } from "./components/ClerkProviderWithRouter.tsx";
 import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <UserProvider>
+      <ClerkProviderWithRouter>
         <App />
         <Toaster />
-      </UserProvider>
+      </ClerkProviderWithRouter>
     </BrowserRouter>
   </StrictMode>,
 );

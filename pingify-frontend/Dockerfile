@@ -7,12 +7,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-# Copy the rest of your application code
+# Copy the rest of your application code (including .env, which Vite reads during the build)
 COPY . .
-
-# Receive the build arg from docker-compose and expose it to Vite during the build
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
 
 # Build the static production files (generates /app/dist or /app/build)
 RUN npm run build

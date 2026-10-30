@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../context/UserContext";
+import { useAuth } from "@clerk/react";
 
 type Feature = {
   icon: string;
@@ -35,7 +35,7 @@ const FeatureCard = ({ icon, title, desc }: Feature) => (
 
 export const MainSection = () => {
   const navigate = useNavigate();
-  const { user } = useUser();
+  const { isSignedIn } = useAuth();
 
   return (
     <main className="flex-1 flex flex-col items-center justify-center px-6 py-6 text-center">
@@ -43,12 +43,12 @@ export const MainSection = () => {
         Know when your <span className="text-primary">website goes down</span>
       </h1>
       <p className="text-lg max-w-md mb-10 opacity-75">
-        Pingify monitors your websites every few seconds and sends you an email
+        Ping-Links monitors your websites every few seconds and sends you an email
         the moment something goes wrong.
       </p>
       <div className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
-        {user ? (
-          <button onClick={() => navigate("/dashboard")} className="btn btn-primary">
+        {isSignedIn ? (
+          <button onClick={() => navigate("/monitors")} className="btn btn-primary">
             Go to Dashboard
           </button>
         ) : (
