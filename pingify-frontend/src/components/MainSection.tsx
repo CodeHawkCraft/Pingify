@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/react";
+import { TryDemoButton } from "./TryDemoButton";
 
 type Feature = {
   icon: string;
@@ -52,14 +53,18 @@ export const MainSection = () => {
             Go to Dashboard
           </button>
         ) : (
-          <>
-            <button onClick={() => navigate("/signup")} className="btn btn-primary">
-              Start monitoring — it's free
-            </button>
-            <button onClick={() => navigate("/login")} className="btn btn-secondary">
-              Log in
-            </button>
-          </>
+          <div className="flex flex-col items-center gap-4">
+            <TryDemoButton />
+            <p className="text-xs opacity-60">No signup needed — explore with a ready-made account</p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button onClick={() => navigate("/signup")} className="btn btn-outline btn-primary btn-sm">
+                Start monitoring — it's free
+              </button>
+              <button onClick={() => navigate("/login")} className="btn btn-ghost btn-sm">
+                Log in
+              </button>
+            </div>
+          </div>
         )}
       </div>
 
