@@ -60,3 +60,9 @@ export async function getPingLogs(websiteId: string, userId: string, query: Ping
     // summary,
   };
 }
+
+export async function remove(websiteId: string, userId: string): Promise<void> {
+  // ping_logs cascade via FK
+  const deleted = await db(TABLES.WEBSITES).where({ id: websiteId, user_id: userId }).del();
+  if (!deleted) throw new ApiError(404, "Website not found");
+}

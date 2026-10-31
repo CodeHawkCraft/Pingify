@@ -30,7 +30,18 @@ let flushTimer: ReturnType<typeof setTimeout> | null = null;
 async function flushPingLogs() {
   if (pingLogBuffer.length === 0) return;
   const batch = pingLogBuffer.splice(0, pingLogBuffer.length);
-  await db(TABLES.PING_LOGS).insert(batch);
+  try {
+// Skip logs for websites that were deleted while their ping was waiting in the queue.
+    const ids = [...new Set(batch.map((l) => l.website_id))];
+    const existing = new Set(
+      (await db(TABLES.WEBSITES).whereIn("id", ids).pluck("id")) as string[],
+    );
+    const rows = batch.filter((l) => existing.has(l.website_id));
+    if (rows.length) await db(TABLES.PING_LOGS).insert(rows);
+  } catch (err) {
+    // ponytail: a delete racing between lookup and insert drops this batch; retry-without-offender if it ever matters
+    console.error("Failed to flush ping logs:", err);
+  }
 }
 
 function scheduleFlush() {

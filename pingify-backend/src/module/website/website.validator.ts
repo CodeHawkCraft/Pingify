@@ -35,3 +35,7 @@ export const getWebsitesQuerySchema = z.object({
 });
 
 export type GetWebsitesQueryInput = z.infer<typeof getWebsitesQuerySchema>;
+
+export const websiteIdParamsSchema = z.object({
+  websiteId: z.uuid("Invalid id"),
+});

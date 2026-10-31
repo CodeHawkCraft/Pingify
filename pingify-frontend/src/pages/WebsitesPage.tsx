@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Globe } from "lucide-react";
+import { ChevronLeft, ChevronRight, Globe, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getMonitors } from "../api/monitor.api";
+import { deleteMonitor, getMonitors } from "../api/monitor.api";
 import type { Monitor, Pagination } from "../types/monitor.types";
 
 export function WebsitesPage() {
@@ -9,6 +9,8 @@ export function WebsitesPage() {
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [reload, setReload] = useState(0);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -18,7 +20,22 @@ export function WebsitesPage() {
         setPagination(res.pagination);
       })
       .finally(() => setIsLoading(false));
-  }, [page]);
+  }, [page, reload]);
+
+  const handleDelete = async (m: Monitor) => {
+    if (!confirm(`Delete "${m.name}" and all its logs? This cannot be undone.`)) return;
+    setDeletingId(m.id);
+    try {
+      await deleteMonitor(m.id);
+      // Last item on a later page -> step back, otherwise refetch current page
+      if (monitors.length === 1 && page > 1) setPage((p) => p - 1);
+      else setReload((r) => r + 1);
+    } catch {
+      // error toast already shown by apiHandler
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -73,7 +90,7 @@ export function WebsitesPage() {
                           minute: "2-digit",
                         })}
                     </td>
-                    <td>
+                    <td className="flex gap-2">
                       <Link
                         to={`/websites/${m.id}/logs`}
                         state={{ websiteName: m.name }}
@@ -81,6 +98,18 @@ export function WebsitesPage() {
                       >
                         Show Logs
                       </Link>
+                      <button
+                        className="btn btn-sm btn-error btn-outline"
+                        aria-label={`Delete ${m.name}`}
+                        disabled={deletingId === m.id}
+                        onClick={() => handleDelete(m)}
+                      >
+                        {deletingId === m.id ? (
+                          <span className="loading loading-spinner loading-xs" />
+                        ) : (
+                          <Trash2 size={14} />
+                        )}
+                      </button>
                     </td>
                   </tr>
                 ))}

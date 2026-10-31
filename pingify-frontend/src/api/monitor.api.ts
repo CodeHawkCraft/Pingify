@@ -20,6 +20,12 @@ export const getMonitors = (page = 1, limit = 20) =>
     { showErrorToast: true },
   );
 
+export const deleteMonitor = (websiteId: string) =>
+  apiHandler<null>(() => axiosInstance.delete(`/monitors/${websiteId}`), {
+    showSuccessToast: true,
+    showErrorToast: true,
+  });
+
 export const getMonitorLogs = (
   websiteId: string,
   params: MonitorLogsQuery = {},

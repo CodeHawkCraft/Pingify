@@ -31,3 +31,12 @@ export const validateQuery = (schema: ZodType<unknown>) => {
     next();
   };
 };
+export const validateParams = (schema: ZodType<unknown>) => {
+  return (req: Request, _res: Response, next: NextFunction): void => {
+    const result = schema.safeParse(req.params);
+    if (!result.success) {
+      throw new ApiError(400, formatZodError(result.error as ZodError));
+    }
+    next();
+  };
+};
