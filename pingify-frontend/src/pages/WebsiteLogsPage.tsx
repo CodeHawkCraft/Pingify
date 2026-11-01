@@ -1,4 +1,4 @@
-import { ArrowLeft, Globe } from "lucide-react";
+import { Activity, ArrowLeft, Bell, Globe } from "lucide-react";
 import { Link, Navigate, useLocation, useParams } from "react-router-dom";
 import { WebsiteLogs } from "../components/WebsiteLogs";
 import { AlertHistory } from "../components/AlertHistory";
@@ -34,9 +34,23 @@ export function WebsiteLogsPage() {
         </Link>
       </div>
 
-      <AlertHistory websiteId={websiteId} />
+      <div className="tabs tabs-border">
+        <label className="tab gap-2">
+          <input type="radio" name="website_tabs" defaultChecked />
+          <Activity size={14} /> Logs
+        </label>
+        <div className="tab-content pt-4">
+          <WebsiteLogs websiteId={websiteId} websiteName={websiteName} />
+        </div>
 
-      <WebsiteLogs websiteId={websiteId} websiteName={websiteName} />
+        <label className="tab gap-2">
+          <input type="radio" name="website_tabs" />
+          <Bell size={14} /> Email Alerts
+        </label>
+        <div className="tab-content pt-4">
+          <AlertHistory websiteId={websiteId} />
+        </div>
+      </div>
     </div>
   );
 }

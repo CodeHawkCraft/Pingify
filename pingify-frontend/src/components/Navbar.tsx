@@ -19,7 +19,8 @@ export const Navbar = () => {
           </button>
           <UserButton />
         </Show>
-                  <button
+        <Show when="signed-out">
+          <button
             onClick={() => navigate("/login")}
             className="btn btn-secondary btn-sm"
           >
@@ -31,7 +32,7 @@ export const Navbar = () => {
           >
             Get started
           </button>
-
+        </Show>
       </div>
     </nav>
   );
