@@ -2,6 +2,7 @@ import axiosInstance from "./axios";
 import { apiHandler } from "./api-handler";
 import type {
   AddMonitorPayload,
+  Alert,
   Monitor,
   MonitorListResponse,
   MonitorLogsQuery,
@@ -34,3 +35,8 @@ export const getMonitorLogs = (
     () => axiosInstance.get(`/monitors/${websiteId}/logs`, { params }),
     { showErrorToast: true },
   );
+
+export const getMonitorAlerts = (websiteId: string) =>
+  apiHandler<Alert[]>(() => axiosInstance.get(`/monitors/${websiteId}/alerts`), {
+    showErrorToast: true,
+  });

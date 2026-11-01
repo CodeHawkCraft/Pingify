@@ -66,3 +66,15 @@ export async function remove(websiteId: string, userId: string): Promise<void> {
   const deleted = await db(TABLES.WEBSITES).where({ id: websiteId, user_id: userId }).del();
   if (!deleted) throw new ApiError(404, "Website not found");
 }
+
+export async function getAlerts(websiteId: string, userId: string) {
+  const website = await db(TABLES.WEBSITES).where({ id: websiteId, user_id: userId }).first();
+  if (!website) throw new ApiError(404, "Website not found");
+
+  // ponytail: latest 50 only, add pagination if anyone ever needs older alerts
+  return db(TABLES.ALERTS)
+    .where({ website_id: websiteId })
+    .select("id", "type", "reason", "created_at", "sent_at")
+    .orderBy("created_at", "desc")
+    .limit(50);
+}

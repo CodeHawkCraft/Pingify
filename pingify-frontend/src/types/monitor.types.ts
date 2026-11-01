@@ -46,3 +46,11 @@ export interface MonitorLogsResponse {
   data: PingLog[];
   pagination: Pagination;
 }
+
+export interface Alert {
+  id: string;
+  type: PingStatus;
+  reason: string | null;
+  created_at: string;
+  sent_at: string | null;
+}

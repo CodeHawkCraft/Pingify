@@ -1,6 +1,7 @@
 import redisClient from "./redis.ts";
 import { db, TABLES } from "./db.ts";
 import env from "./env.ts";
+import { startAlertConsumer, trackStatus } from "./alerts.ts";
 
 interface StreamMessage {
   id: string;
@@ -94,13 +95,25 @@ async function pingWebsite(websiteId: string, url: string) {
       response_time_ms: Date.now() - start,
       status: response.ok ? "up" : "down",
     });
+    await safeTrackStatus(websiteId, response.ok, `HTTP ${response.status}`);
   } catch (err) {
+    const error = err instanceof Error ? err.message : "Unknown error";
     bufferPingLog({
       website_id: websiteId,
       status: "down",
       response_time_ms: Date.now() - start,
-      error: err instanceof Error ? err.message : "Unknown error",
+      error,
     });
+    await safeTrackStatus(websiteId, false, error);
+  }
+}
+
+// Alerting must never break pinging/acking.
+async function safeTrackStatus(websiteId: string, isUp: boolean, reason: string) {
+  try {
+    await trackStatus(websiteId, isUp, reason);
+  } catch (err) {
+    console.error(`Alert tracking failed for ${websiteId}:`, err);
   }
 }
 
@@ -210,6 +223,7 @@ export async function startWorkers() {
   );
 
   consumers.forEach((name) => readConsumer(name));
+  startAlertConsumer().catch((err) => console.error("Alert consumer failed to start:", err));
 
   // Start pending message recovery on the first consumer
   startPendingRecovery(env.REDIS_CONSUMER_4);

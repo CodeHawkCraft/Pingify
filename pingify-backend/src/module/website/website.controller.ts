@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { successResponse } from "../../utils/api-response.ts";
 import { getUserId } from "../../middlewares/auth.middleware.ts";
-import { create, getWebsites, getPingLogs, remove } from "./website.service.ts";
+import { create, getWebsites, getPingLogs, remove, getAlerts } from "./website.service.ts";
 import { pingLogsQuerySchema, getWebsitesQuerySchema } from "./website.validator.ts";
 
 export async function getWebsitesController(req: Request, res: Response) {
@@ -25,4 +25,9 @@ export async function getPingLogsController(req: Request, res: Response) {
 export async function deleteWebsiteController(req: Request, res: Response) {
   await remove(req.params.websiteId as string, getUserId(req));
   res.json(successResponse(null, "Website deleted successfully"));
+}
+
+export async function getAlertsController(req: Request, res: Response) {
+  const result = await getAlerts(req.params.websiteId as string, getUserId(req));
+  res.json(successResponse(result, "Alerts fetched successfully"));
 }

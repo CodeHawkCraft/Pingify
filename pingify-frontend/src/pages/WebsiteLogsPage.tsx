@@ -1,6 +1,7 @@
 import { ArrowLeft, Globe } from "lucide-react";
 import { Link, Navigate, useLocation, useParams } from "react-router-dom";
 import { WebsiteLogs } from "../components/WebsiteLogs";
+import { AlertHistory } from "../components/AlertHistory";
 
 type WebsiteLogsLocationState = {
   websiteName?: string;
@@ -32,6 +33,8 @@ export function WebsiteLogsPage() {
           Back
         </Link>
       </div>
+
+      <AlertHistory websiteId={websiteId} />
 
       <WebsiteLogs websiteId={websiteId} websiteName={websiteName} />
     </div>

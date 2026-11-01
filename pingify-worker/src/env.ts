@@ -29,6 +29,9 @@ const env = {
   REDIS_CONSUMER_2: getEnv("REDIS_CONSUMER_2"),
   REDIS_CONSUMER_3: getEnv("REDIS_CONSUMER_3"),
   REDIS_CONSUMER_4: getEnv("REDIS_CONSUMER_4"),
+  // Optional: Gmail address + App Password for downtime alert emails
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASS: process.env.SMTP_PASS,
 };
 
 export default env;

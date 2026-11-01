@@ -5,7 +5,8 @@ import env from "../env.ts";
 export const TABLES = {
   USERS: "users",
   WEBSITES: "websites",
-  PING_LOGS: "ping_logs"
+  PING_LOGS: "ping_logs",
+  ALERTS: "alerts",
 } as const;
 
 const environment = env.NODE_ENV || "development";
