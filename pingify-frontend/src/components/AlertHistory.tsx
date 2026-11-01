@@ -19,7 +19,11 @@ export function AlertHistory({ websiteId }: { websiteId: string }) {
       </p>
 
       {alerts === null ? (
-        <span className="loading loading-spinner loading-sm" />
+        <div className="space-y-2" aria-busy="true" aria-label="Loading alerts">
+          {Array.from({ length: 3 }, (_, i) => (
+            <div key={i} className="skeleton h-6 w-full" />
+          ))}
+        </div>
       ) : alerts.length === 0 ? (
         <p className="text-sm opacity-60">
           No alerts yet. You'll get an email after 3 failed checks in a row, and again when it recovers.

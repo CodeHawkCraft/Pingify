@@ -61,8 +61,13 @@ export function WebsiteLogs({ websiteId }: Props) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-16">
-        <span className="loading loading-spinner" />
+      <div className="space-y-6" aria-busy="true" aria-label="Loading logs">
+        <div className="skeleton h-60 w-full" />
+        <div className="space-y-2">
+          {Array.from({ length: 6 }, (_, i) => (
+            <div key={i} className="skeleton h-10 w-full" />
+          ))}
+        </div>
       </div>
     );
   }

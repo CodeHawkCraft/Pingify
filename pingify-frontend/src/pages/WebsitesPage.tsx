@@ -55,8 +55,10 @@ export function WebsitesPage() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-16">
-          <span className="loading loading-spinner" />
+        <div className="space-y-2" aria-busy="true" aria-label="Loading websites">
+          {Array.from({ length: 5 }, (_, i) => (
+            <div key={i} className="skeleton h-12 w-full" />
+          ))}
         </div>
       ) : monitors.length === 0 ? (
         <div className="text-center py-16 opacity-60">
