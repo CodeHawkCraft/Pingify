@@ -28,23 +28,20 @@ const Sidebar = () => {
           Ping-Links
         </p>
 
-        <nav className="flex flex-col gap-1 flex-1">
+        <ul className="menu w-full flex-1 p-0 gap-1">
           {navItems.map(({ to, icon: Icon, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              onClick={closeDrawer}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded text-sm ${
-                  isActive ? "bg-base-300 font-medium" : "hover:bg-base-300"
-                }`
-              }
-            >
-              <Icon size={16} />
-              {label}
-            </NavLink>
+            <li key={to}>
+              <NavLink
+                to={to}
+                onClick={closeDrawer}
+                className={({ isActive }) => (isActive ? "menu-active" : "")}
+              >
+                <Icon size={16} />
+                {label}
+              </NavLink>
+            </li>
           ))}
-        </nav>
+        </ul>
 
         <button onClick={() => signOut({ redirectUrl: "/" })} className="btn btn-ghost btn-sm justify-start">
           Logout
