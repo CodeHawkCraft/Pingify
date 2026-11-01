@@ -29,9 +29,9 @@ export function TryDemoButton() {
       className="group btn btn-primary btn-lg relative shadow-lg shadow-primary/40 ring-4 ring-primary/20 hover:scale-105 transition-transform motion-reduce:hover:scale-100"
     >
       {/* Pulsing "live" dot to pull the eye */}
-      <span className="absolute -top-1 -right-1 flex size-3">
-        <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-75 animate-ping motion-reduce:animate-none" />
-        <span className="relative inline-flex size-3 rounded-full bg-success" />
+      <span className="absolute -top-1 -right-1 inline-grid *:[grid-area:1/1]" aria-hidden="true">
+        <span className="status status-success status-lg animate-ping motion-reduce:animate-none" />
+        <span className="status status-success status-lg" />
       </span>
       {signingIn ? <span className="loading loading-spinner loading-sm" /> : <PlayCircle size={20} />}
       Try Live Demo

@@ -39,7 +39,7 @@ export function AddWebsiteForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-1">
         <fieldset className="fieldset">
           <legend className="fieldset-legend">
             Monitor Name <span className="text-error" aria-hidden="true">*</span>
@@ -52,7 +52,7 @@ export function AddWebsiteForm() {
             aria-invalid={!!errors.name}
             className={inputClass(!!errors.name)}
           />
-          {errors.name && <p className="label text-error">{errors.name.message}</p>}
+          <p className="label text-error min-h-4">{errors.name?.message}</p>
         </fieldset>
 
         <fieldset className="fieldset">
@@ -67,10 +67,10 @@ export function AddWebsiteForm() {
             aria-invalid={!!errors.url}
             className={inputClass(!!errors.url)}
           />
-          {errors.url && <p className="label text-error">{errors.url.message}</p>}
+          <p className="label text-error min-h-4">{errors.url?.message}</p>
         </fieldset>
 
-        <button type="submit" disabled={loading} className="btn btn-primary">
+        <button type="submit" disabled={loading} className="btn btn-primary mt-2">
           {loading ? <span className="loading loading-spinner loading-sm" /> : "Add Monitor"}
         </button>
       </form>

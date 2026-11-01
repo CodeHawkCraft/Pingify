@@ -69,7 +69,7 @@ export function WebsitesPage() {
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto border">
+          <div className="overflow-x-auto rounded-box border">
             <table className="table w-full">
               <thead>
                 <tr>

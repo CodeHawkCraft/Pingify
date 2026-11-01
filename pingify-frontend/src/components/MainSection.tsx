@@ -27,10 +27,12 @@ const FEATURES: Feature[] = [
 ];
 
 const FeatureCard = ({ icon, title, desc }: Feature) => (
-  <div className="border rounded-lg p-4">
-    <div className="text-xl mb-2">{icon}</div>
-    <h3 className="text-sm mb-1">{title}</h3>
-    <p className="text-xs text-primary opacity-70">{desc}</p>
+  <div className="card card-border card-sm bg-base-100 border-base-content/15">
+    <div className="card-body items-center text-center">
+      <div className="text-xl">{icon}</div>
+      <h3 className="card-title text-sm">{title}</h3>
+      <p className="text-xs text-primary opacity-70">{desc}</p>
+    </div>
   </div>
 );
 

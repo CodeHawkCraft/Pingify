@@ -83,32 +83,34 @@ export function WebsiteLogs({ websiteId }: Props) {
   return (
     <div className="space-y-6">
       {/* Response Time Chart */}
-      <div className="border p-4">
-        <p className="text-sm font-medium mb-3 opacity-70">Response Time (ms)</p>
-        <ResponsiveContainer width="100%" height={200}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-            <XAxis
-              dataKey="time"
-              tick={{ fontSize: 11 }}
-            />
-            <YAxis tick={{ fontSize: 11 }} />
-            <Tooltip
-              formatter={(val) => [`${val ?? "—"} ms`, "Response time"]}
-              contentStyle={{
-                backgroundColor: "var(--color-base-200)",
-                borderRadius: "6px",
-                fontSize: 12,
-              }}
-            />
-            <Line
-              type="monotone"
-              dataKey="ms"
-              dot={false}
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      <div className="card card-border card-sm bg-base-100 border-base-content/15">
+        <div className="card-body">
+          <h2 className="card-title text-sm opacity-70">Response Time (ms)</h2>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+              <XAxis
+                dataKey="time"
+                tick={{ fontSize: 11 }}
+              />
+              <YAxis tick={{ fontSize: 11 }} />
+              <Tooltip
+                formatter={(val) => [`${val ?? "—"} ms`, "Response time"]}
+                contentStyle={{
+                  backgroundColor: "var(--color-base-200)",
+                  borderRadius: "6px",
+                  fontSize: 12,
+                }}
+              />
+              <Line
+                type="monotone"
+                dataKey="ms"
+                dot={false}
+                strokeWidth={2}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Logs Table */}

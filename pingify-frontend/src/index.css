@@ -2,3 +2,12 @@
 @plugin "daisyui" {
   themes: forest --default;
 }
+
+/* One border colour everywhere: plain `border` / `border-b` / `border-r` match the cards */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: color-mix(in oklab, var(--color-base-content) 15%, transparent);
+  }
+}
