@@ -48,7 +48,7 @@ export function AddWebsiteForm() {
             {...register("name")}
             type="text"
             placeholder="My App"
-            required
+            aria-required="true"
             aria-invalid={!!errors.name}
             className={inputClass(!!errors.name)}
           />
@@ -63,7 +63,7 @@ export function AddWebsiteForm() {
             {...register("url")}
             type="text"
             placeholder="https://example.com"
-            required
+            aria-required="true"
             aria-invalid={!!errors.url}
             className={inputClass(!!errors.url)}
           />

@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Globe, Trash2 } from "lucide-react";
+import { Globe, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { deleteMonitor, getMonitors } from "../api/monitor.api";
+import { PaginationBar } from "../components/PaginationBar";
 import type { Monitor, Pagination } from "../types/monitor.types";
 
 export function WebsitesPage() {
@@ -126,30 +127,7 @@ export function WebsitesPage() {
             </table>
           </div>
 
-          {pagination && pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <span className="text-sm opacity-60">
-                Page {pagination.page} of {pagination.totalPages} &middot;{" "}
-                {pagination.total} total
-              </span>
-              <div className="flex gap-2">
-                <button
-                  className="btn btn-sm btn-ghost"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => p - 1)}
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <button
-                  className="btn btn-sm btn-ghost"
-                  disabled={page >= pagination.totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            </div>
-          )}
+          <PaginationBar pagination={pagination} page={page} onPageChange={setPage} />
         </>
       )}
 

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -10,6 +9,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { getMonitorLogs } from "../api/monitor.api";
+import { PaginationBar } from "./PaginationBar";
 import type { PingLog, Pagination } from "../types/monitor.types";
 
 interface Props {
@@ -146,31 +146,7 @@ export function WebsiteLogs({ websiteId }: Props) {
         </table>
       </div>
 
-      {/* Pagination */}
-      {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <span className="text-sm opacity-60">
-            Page {pagination.page} of {pagination.totalPages} &middot;{" "}
-            {pagination.total} total
-          </span>
-          <div className="flex gap-2">
-            <button
-              className="btn btn-sm btn-ghost"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => p - 1)}
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button
-              className="btn btn-sm btn-ghost"
-              disabled={page >= pagination.totalPages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
-      )}
+      <PaginationBar pagination={pagination} page={page} onPageChange={setPage} />
     </div>
   );
 }
