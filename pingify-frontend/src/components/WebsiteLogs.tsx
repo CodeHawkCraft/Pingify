@@ -44,7 +44,7 @@ export function WebsiteLogs({ websiteId }: Props) {
 
   useEffect(() => {
     setIsLoading(true);
-    getMonitorLogs(websiteId, { page, limit: 100 })
+    getMonitorLogs(websiteId, { page, limit: 10 })
       .then((res) => {
         setLogs(res.data);
         setPagination(res.pagination);
@@ -98,7 +98,8 @@ export function WebsiteLogs({ websiteId }: Props) {
                 formatter={(val) => [`${val ?? "—"} ms`, "Response time"]}
                 contentStyle={{
                   backgroundColor: "var(--color-base-200)",
-                  borderRadius: "6px",
+                  border: "1px solid color-mix(in oklab, var(--color-base-content) 15%, transparent)",
+                  borderRadius: "var(--radius-box)",
                   fontSize: 12,
                 }}
               />
@@ -114,7 +115,7 @@ export function WebsiteLogs({ websiteId }: Props) {
       </div>
 
       {/* Logs Table */}
-      <div className="overflow-x-auto border">
+      <div className="overflow-x-auto rounded-box border">
         <table className="table w-full text-sm">
           <thead>
             <tr>

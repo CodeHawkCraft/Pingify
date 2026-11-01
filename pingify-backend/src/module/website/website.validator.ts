@@ -15,7 +15,7 @@ export const pingLogsQuerySchema = z
     endDate: z.iso.datetime({ offset: true }).optional(),
     status: z.enum(["up", "down"]).optional(),
     page: z.coerce.number().int().min(1).default(1),
-    limit: z.coerce.number().int().min(1).max(100).default(50),
+    limit: z.coerce.number().int().min(1).max(25).default(10),
   })
   .refine(
     (data) => {

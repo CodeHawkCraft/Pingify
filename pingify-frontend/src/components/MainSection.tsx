@@ -74,7 +74,7 @@ export const MainSection = () => {
         <p className="text-xs uppercase tracking-widest opacity-40 mb-3 font-semibold">
           See it in action
         </p>
-        <div className="rounded-2xl overflow-hidden shadow-2xl border border-base-300">
+        <div className="rounded-box overflow-hidden shadow-2xl border">
           <video
             src="https://res.cloudinary.com/djqoudrj1/video/upload/v1776540237/pingify_xg4pfy.mp4"
             autoPlay
