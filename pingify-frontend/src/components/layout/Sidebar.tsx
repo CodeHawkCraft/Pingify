@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Activity, Globe } from "lucide-react";
+import { Activity, Globe, LogOut } from "lucide-react";
 import { useClerk } from "@clerk/react";
 
 export const DRAWER_ID = "dashboard-drawer";
@@ -43,9 +43,14 @@ const Sidebar = () => {
           ))}
         </ul>
 
-        <button onClick={() => signOut({ redirectUrl: "/" })} className="btn btn-ghost btn-sm justify-start">
-          Logout
-        </button>
+        <ul className="menu w-full p-0">
+          <li>
+            <button onClick={() => signOut({ redirectUrl: "/" })} className="text-error">
+              <LogOut size={16} />
+              Logout
+            </button>
+          </li>
+        </ul>
       </aside>
     </div>
   );

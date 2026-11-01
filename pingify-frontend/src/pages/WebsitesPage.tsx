@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Globe, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { deleteMonitor, getMonitors } from "../api/monitor.api";
@@ -11,6 +11,8 @@ export function WebsitesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [reload, setReload] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Monitor | null>(null);
+  const deleteDialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -22,8 +24,14 @@ export function WebsitesPage() {
       .finally(() => setIsLoading(false));
   }, [page, reload]);
 
-  const handleDelete = async (m: Monitor) => {
-    if (!confirm(`Delete "${m.name}" and all its logs? This cannot be undone.`)) return;
+  const askDelete = (m: Monitor) => {
+    setPendingDelete(m);
+    deleteDialogRef.current?.showModal();
+  };
+
+  const handleDelete = async () => {
+    const m = pendingDelete;
+    if (!m) return;
     setDeletingId(m.id);
     try {
       await deleteMonitor(m.id);
@@ -34,6 +42,7 @@ export function WebsitesPage() {
       // error toast already shown by apiHandler
     } finally {
       setDeletingId(null);
+      deleteDialogRef.current?.close();
     }
   };
 
@@ -102,7 +111,7 @@ export function WebsitesPage() {
                         className="btn btn-sm btn-error btn-outline"
                         aria-label={`Delete ${m.name}`}
                         disabled={deletingId === m.id}
-                        onClick={() => handleDelete(m)}
+                        onClick={() => askDelete(m)}
                       >
                         {deletingId === m.id ? (
                           <span className="loading loading-spinner loading-xs" />
@@ -143,6 +152,29 @@ export function WebsitesPage() {
           )}
         </>
       )}
+
+      <dialog ref={deleteDialogRef} className="modal">
+        <div className="modal-box">
+          <h3 className="text-lg font-bold">Delete monitor?</h3>
+          <p className="py-4">
+            <span className="font-medium">"{pendingDelete?.name}"</span> and all its logs will be
+            permanently deleted. This cannot be undone.
+          </p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn btn-ghost" disabled={!!deletingId}>
+                Cancel
+              </button>
+            </form>
+            <button className="btn btn-error" disabled={!!deletingId} onClick={handleDelete}>
+              {deletingId ? <span className="loading loading-spinner loading-sm" /> : "Delete"}
+            </button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </div>
   );
 }
