@@ -2,10 +2,7 @@ import { NavLink } from "react-router-dom";
 import { Activity, Globe } from "lucide-react";
 import { useClerk } from "@clerk/react";
 
-type SidebarProps = {
-  open: boolean;
-  onClose: () => void;
-};
+export const DRAWER_ID = "dashboard-drawer";
 
 const navItems = [
   // { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -13,27 +10,20 @@ const navItems = [
   { to: "/websites", icon: Globe, label: "Websites" },
 ];
 
-const Sidebar = ({ open, onClose }: SidebarProps) => {
+// Uncheck the drawer toggle so the mobile drawer closes after navigating
+const closeDrawer = () => {
+  const toggle = document.getElementById(DRAWER_ID) as HTMLInputElement | null;
+  if (toggle) toggle.checked = false;
+};
+
+const Sidebar = () => {
   const { signOut } = useClerk();
 
   return (
-    <>
-      {/* Mobile overlay */}
-      {open && (
-        <div
-          className="fixed inset-0 z-20 bg-black/40 md:hidden"
-          onClick={onClose}
-        />
-      )}
+    <div className="drawer-side z-30">
+      <label htmlFor={DRAWER_ID} aria-label="Close sidebar" className="drawer-overlay" />
 
-      <aside
-        className={`
-          fixed h-full z-30 flex flex-col w-56 border-r bg-base-200 px-4 py-6
-          transition-transform duration-200
-          md:static md:translate-x-0
-          ${open ? "translate-x-0" : "-translate-x-full"}
-        `}
-      >
+      <aside className="flex flex-col min-h-full w-56 border-r bg-base-200 px-4 py-6">
         <p className="text-base font-bold tracking-widest uppercase text-primary mb-6">
           Ping-Links
         </p>
@@ -43,7 +33,7 @@ const Sidebar = ({ open, onClose }: SidebarProps) => {
             <NavLink
               key={to}
               to={to}
-              onClick={onClose}
+              onClick={closeDrawer}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded text-sm ${
                   isActive ? "bg-base-300 font-medium" : "hover:bg-base-300"
@@ -56,11 +46,11 @@ const Sidebar = ({ open, onClose }: SidebarProps) => {
           ))}
         </nav>
 
-          <button onClick={() => signOut({ redirectUrl: "/" })} className="btn btn-ghost btn-sm justify-start">
-            Logout
-          </button>
+        <button onClick={() => signOut({ redirectUrl: "/" })} className="btn btn-ghost btn-sm justify-start">
+          Logout
+        </button>
       </aside>
-    </>
+    </div>
   );
 };
 
