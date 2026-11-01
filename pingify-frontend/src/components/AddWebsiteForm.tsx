@@ -22,13 +22,13 @@ export function AddWebsiteForm() {
       await addMonitor({ name: data.name, url: data.url });
       reset();
     } catch {
+      // error toast already shown by apiHandler
     } finally {
       setLoading(false);
     }
   };
 
-  const inputClass = (hasError: boolean) =>
-    `input w-full input-bordered w-full${hasError && "input-error"}`;
+  const inputClass = (hasError: boolean) => `input w-full ${hasError ? "input-error" : ""}`;
 
   return (
     <div className="max-w-lg mx-auto p-8">
@@ -39,28 +39,36 @@ export function AddWebsiteForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Monitor Name</label>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">
+            Monitor Name <span className="text-error" aria-hidden="true">*</span>
+          </legend>
           <input
             {...register("name")}
             type="text"
             placeholder="My App"
+            required
+            aria-invalid={!!errors.name}
             className={inputClass(!!errors.name)}
           />
-          {errors.name && <p className="text-error text-xs">{errors.name.message}</p>}
-        </div>
+          {errors.name && <p className="label text-error">{errors.name.message}</p>}
+        </fieldset>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium">Website URL</label>
+        <fieldset className="fieldset">
+          <legend className="fieldset-legend">
+            Website URL <span className="text-error" aria-hidden="true">*</span>
+          </legend>
           <input
             {...register("url")}
             type="text"
             placeholder="https://example.com"
+            required
+            aria-invalid={!!errors.url}
             className={inputClass(!!errors.url)}
           />
-          {errors.url && <p className="text-error text-xs">{errors.url.message}</p>}
-        </div>
+          {errors.url && <p className="label text-error">{errors.url.message}</p>}
+        </fieldset>
 
         <button type="submit" disabled={loading} className="btn btn-primary">
           {loading ? <span className="loading loading-spinner loading-sm" /> : "Add Monitor"}
