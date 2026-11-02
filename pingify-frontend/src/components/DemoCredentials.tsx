@@ -2,7 +2,7 @@ import { Copy, Info } from "lucide-react";
 import toast from "react-hot-toast";
 
 
-export const DEMO_EMAIL = "ricahe3759@ofags.com";
+export const DEMO_EMAIL = "silof33402@bankwen.com";
 export const DEMO_PASSWORD = "K2WajfTS6JVxhak";
 
 export function DemoCredentials() {
