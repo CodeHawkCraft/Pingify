@@ -70,7 +70,7 @@ export const MainSection = () => {
         )}
       </div>
 
-      <div className="w-full max-w-5xl mb-10">
+      {/* <div className="w-full max-w-5xl mb-10">
         <p className="text-xs uppercase tracking-widest opacity-40 mb-3 font-semibold">
           See it in action
         </p>
@@ -86,7 +86,7 @@ export const MainSection = () => {
             className="w-full h-auto"
           />
         </div>
-      </div>
+      </div> */}
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl w-full">
         {FEATURES.map((feature) => (
