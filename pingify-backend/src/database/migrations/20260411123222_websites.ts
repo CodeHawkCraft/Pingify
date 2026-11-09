@@ -16,6 +16,7 @@ export async function up(knex: Knex) {
       .onDelete("CASCADE");
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
+    table.boolean("is_paused").notNullable().defaultTo(false);
     // Jitter: spread initial pings across the interval to avoid thundering herd
     table
       .timestamp("next_ping_at")

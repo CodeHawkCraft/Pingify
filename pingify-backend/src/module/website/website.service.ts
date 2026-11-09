@@ -1,5 +1,6 @@
 import { db, TABLES } from "../../database/db.ts";
 import { ApiError } from "../../utils/api-error.ts";
+import redisClient from "../../database/redis.ts";
 import {
   findWebsiteByUrlAndUser,
   findWebsiteByNameAndUser,
@@ -77,4 +78,16 @@ export async function getAlerts(websiteId: string, userId: string) {
     .select("id", "type", "reason", "created_at", "sent_at")
     .orderBy("created_at", "desc")
     .limit(50);
+}
+
+export async function setPaused(websiteId: string, userId: string, isPaused: boolean): Promise<WebsiteResponse> {
+  const [website] = await db(TABLES.WEBSITES)
+    .where({ id: websiteId, user_id: userId })
+    .update({ is_paused: isPaused, next_ping_at: db.fn.now(), updated_at: db.fn.now() })
+    .returning(["id", "name", "url", "is_paused", "created_at"]);
+  if (!website) throw new ApiError(404, "Website not found");
+
+  // Reset worker failure/downtime state so a pause never produces a stale up/down alert.
+  await redisClient.del([`fails:${websiteId}`, `down:${websiteId}`]);
+  return website;
 }

@@ -12,6 +12,7 @@ async function schedulerTick() {
     await db.transaction(async (trx) => {
       const websites = await trx<Websites>(TABLES.WEBSITES)
         .where("next_ping_at", "<=", db.fn.now())
+        .where("is_paused", false)
         .orderBy("next_ping_at", "asc")
         .limit(BATCH_SIZE)
         .select("id", "url")

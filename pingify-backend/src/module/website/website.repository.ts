@@ -26,7 +26,7 @@ export async function createWebsite(
 ): Promise<WebsiteResponse> {
   const [website] = await db(TABLES.WEBSITES)
     .insert({ name, url, user_id: userId })
-    .returning(["id", "name", "url", "created_at"]);
+    .returning(["id", "name", "url", "is_paused", "created_at"]);
   return website;
 }
 
@@ -41,7 +41,7 @@ export async function findWebsitesByUser(
 
   const [countResult, websites] = await Promise.all([
     base.clone().count("id as count").first(),
-    base.clone().select("id", "name", "url", "created_at").orderBy("created_at", "desc").limit(limit).offset(offset),
+    base.clone().select("id", "name", "url", "is_paused", "created_at").orderBy("created_at", "desc").limit(limit).offset(offset),
   ]);
 
   return { websites, total: Number(countResult?.count ?? 0) };

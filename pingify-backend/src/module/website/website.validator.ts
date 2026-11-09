@@ -39,3 +39,9 @@ export type GetWebsitesQueryInput = z.infer<typeof getWebsitesQuerySchema>;
 export const websiteIdParamsSchema = z.object({
   websiteId: z.uuid("Invalid id"),
 });
+
+export const updatePausedSchema = z.object({
+  is_paused: z.boolean(),
+});
+
+export type UpdatePausedInput = z.infer<typeof updatePausedSchema>;
