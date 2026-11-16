@@ -132,7 +132,7 @@ async function readConsumer(consumerName: string) {
         env.REDIS_GROUP_NAME,
         consumerName,
         { key: env.REDIS_STREAM_NAME, id: ">" },
-        { COUNT: 5, BLOCK: 5000 },
+        { COUNT: 20, BLOCK: 5000 },
       );
 
       if (!response) continue;
