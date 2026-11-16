@@ -1,4 +1,4 @@
-import redisClient from "./redis.ts";
+import redisClient, { blockingClient } from "./redis.ts";
 import { db, TABLES } from "./db.ts";
 import env from "./env.ts";
 import { sendEmail, canSendEmail } from "./utils/mailer.ts";
@@ -67,9 +67,10 @@ export async function startAlertConsumer() {
   // "0" = re-read our own pending (unacked) alerts, ">" = new ones.
   // Start with "0" so alerts left pending by a crash or failed send get retried.
   let id = "0";
+  const reader = await blockingClient();
   while (true) {
     try {
-      const res = await redisClient.xReadGroup(
+      const res = await reader.xReadGroup(
         env.REDIS_GROUP_NAME,
         ALERT_CONSUMER,
         { key: ALERT_STREAM, id },

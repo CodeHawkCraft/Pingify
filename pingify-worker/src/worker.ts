@@ -1,4 +1,4 @@
-import redisClient from "./redis.ts";
+import redisClient, { blockingClient } from "./redis.ts";
 import { db, TABLES } from "./db.ts";
 import env from "./env.ts";
 import { startAlertConsumer, trackStatus } from "./alerts.ts";
@@ -23,6 +23,7 @@ interface PingLog {
   status_code?: number;
   response_time_ms: number;
   error?: string;
+  pinged_at: Date;
 }
 
 const pingLogBuffer: PingLog[] = [];
@@ -91,6 +92,7 @@ async function pingWebsite(websiteId: string, url: string) {
 
     bufferPingLog({
       website_id: websiteId,
+      pinged_at: new Date(start),
       status_code: response.status,
       response_time_ms: Date.now() - start,
       status: response.ok ? "up" : "down",
@@ -100,6 +102,7 @@ async function pingWebsite(websiteId: string, url: string) {
     const error = err instanceof Error ? err.message : "Unknown error";
     bufferPingLog({
       website_id: websiteId,
+      pinged_at: new Date(start),
       status: "down",
       response_time_ms: Date.now() - start,
       error,
@@ -117,10 +120,15 @@ async function safeTrackStatus(websiteId: string, isUp: boolean, reason: string)
   }
 }
 
+
+const STALE_JOB_MS = 10_000;
+const isStale = (streamId: string) => Date.now() - Number(streamId.split("-")[0]) > STALE_JOB_MS;
+
 async function readConsumer(consumerName: string) {
+  const reader = await blockingClient();
   while (true) {
     try {
-      const response = await redisClient.xReadGroup(
+      const response = await reader.xReadGroup(
         env.REDIS_GROUP_NAME,
         consumerName,
         { key: env.REDIS_STREAM_NAME, id: ">" },
@@ -136,8 +144,12 @@ async function readConsumer(consumerName: string) {
         const promises = stream.messages.map(async (message: StreamMessage) => {
           const { website_id, url } = message.message;
 
-          await pingWebsite(website_id, url);
-          console.log(`Pinged: ${url} (website_id: ${website_id})`);
+          if (isStale(message.id)) {
+            console.log(`Skipped stale job: ${url} (website_id: ${website_id})`);
+          } else {
+            await pingWebsite(website_id, url);
+            console.log(`Pinged: ${url} (website_id: ${website_id})`);
+          }
 
           await redisClient.xAck(
             env.REDIS_STREAM_NAME,
@@ -177,8 +189,10 @@ async function recoverPendingMessages(consumerName: string) {
       .filter((m): m is StreamMessage => m !== null)
       .map(async (message) => {
         const { website_id, url } = message.message;
-        await pingWebsite(website_id, url);
-        console.log(`[${consumerName}] Recovered pending: ${url} (website_id: ${website_id})`);
+        if (!isStale(message.id)) {
+          await pingWebsite(website_id, url);
+          console.log(`[${consumerName}] Recovered pending: ${url} (website_id: ${website_id})`);
+        }
         await redisClient.xAck(env.REDIS_STREAM_NAME, env.REDIS_GROUP_NAME, message.id);
       });
 
@@ -222,7 +236,9 @@ export async function startWorkers() {
     `Starting ${consumers.length} consumers for group: ${env.REDIS_GROUP_NAME}`,
   );
 
-  consumers.forEach((name) => readConsumer(name));
+  consumers.forEach((name) =>
+    readConsumer(name).catch((err) => console.error(`[${name}] failed to start:`, err)),
+  );
   startAlertConsumer().catch((err) => console.error("Alert consumer failed to start:", err));
 
   // Start pending message recovery on the first consumer

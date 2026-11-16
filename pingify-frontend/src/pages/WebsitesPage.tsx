@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Globe, Trash2 } from "lucide-react";
+import { Globe, Pause, Play, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { deleteMonitor, getMonitors } from "../api/monitor.api";
+import { deleteMonitor, getMonitors, setMonitorPaused } from "../api/monitor.api";
 import { PaginationBar } from "../components/PaginationBar";
 import type { Monitor, Pagination } from "../types/monitor.types";
 
@@ -12,6 +12,7 @@ export function WebsitesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [reload, setReload] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Monitor | null>(null);
   const deleteDialogRef = useRef<HTMLDialogElement>(null);
 
@@ -24,6 +25,18 @@ export function WebsitesPage() {
       })
       .finally(() => setIsLoading(false));
   }, [page, reload]);
+
+  const togglePause = async (m: Monitor) => {
+    setTogglingId(m.id);
+    try {
+      const updated = await setMonitorPaused(m.id, !m.is_paused);
+      setMonitors((list) => list.map((x) => (x.id === m.id ? { ...x, is_paused: updated.is_paused } : x)));
+    } catch {
+      // error toast already shown by apiHandler
+    } finally {
+      setTogglingId(null);
+    }
+  };
 
   const askDelete = (m: Monitor) => {
     setPendingDelete(m);
@@ -82,7 +95,10 @@ export function WebsitesPage() {
               <tbody>
                 {monitors.map((m) => (
                   <tr key={m.id}>
-                    <td className="font-medium">{m.name}</td>
+                    <td className="font-medium">
+                      {m.name}
+                      {m.is_paused && <span className="badge badge-warning badge-sm ml-2">Paused</span>}
+                    </td>
                     <td>
                       <a
                         href={m.url}
@@ -110,6 +126,21 @@ export function WebsitesPage() {
                       >
                         Show Logs
                       </Link>
+                      <button
+                        className="btn btn-sm btn-outline"
+                        aria-label={`${m.is_paused ? "Resume" : "Pause"} ${m.name}`}
+                        title={m.is_paused ? "Resume monitoring" : "Pause monitoring"}
+                        disabled={togglingId === m.id}
+                        onClick={() => togglePause(m)}
+                      >
+                        {togglingId === m.id ? (
+                          <span className="loading loading-spinner loading-xs" />
+                        ) : m.is_paused ? (
+                          <Play size={14} />
+                        ) : (
+                          <Pause size={14} />
+                        )}
+                      </button>
                       <button
                         className="btn btn-sm btn-error btn-outline"
                         aria-label={`Delete ${m.name}`}

@@ -27,6 +27,12 @@ export const deleteMonitor = (websiteId: string) =>
     showErrorToast: true,
   });
 
+export const setMonitorPaused = (websiteId: string, isPaused: boolean) =>
+  apiHandler<Monitor>(
+    () => axiosInstance.patch(`/monitors/${websiteId}/pause`, { is_paused: isPaused }),
+    { showSuccessToast: true, showErrorToast: true },
+  );
+
 export const getMonitorLogs = (
   websiteId: string,
   params: MonitorLogsQuery = {},

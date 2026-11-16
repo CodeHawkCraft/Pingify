@@ -115,6 +115,7 @@ export function WebsiteLogs({ websiteId }: Props) {
       </div>
 
       {/* Logs Table */}
+      <p className="text-xs opacity-60">Checked every ~3s</p>
       <div className="overflow-x-auto rounded-box border">
         <table className="table w-full text-sm">
           <thead>

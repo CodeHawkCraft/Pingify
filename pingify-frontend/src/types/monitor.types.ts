@@ -7,6 +7,7 @@ export interface Monitor {
   id: string;
   name: string;
   url: string;
+  is_paused: boolean;
   created_at: string;
 }
 

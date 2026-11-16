@@ -15,4 +15,14 @@ redisClient.on("connect", () => {
 
 await redisClient.connect();
 
+// XREADGROUP BLOCK keeps the connection busy while waiting for data.
+// This prevents other commands from running on the same connection.
+// So, each blocking reader gets a separate connection.
+export async function blockingClient() {
+  const client = redisClient.duplicate();
+  client.on("error", (err) => console.error("Redis Blocking Client Error:", err));
+  await client.connect();
+  return client;
+}
+
 export default redisClient;
