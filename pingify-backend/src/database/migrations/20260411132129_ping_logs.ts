@@ -15,6 +15,7 @@ export async function up(knex: Knex): Promise<void> {
     table.enum("status", ["up", "down"]).notNullable();
     table.text("error").nullable();
     table.timestamp("pinged_at").notNullable().defaultTo(knex.fn.now());
+    table.index(["website_id", "pinged_at"]);
   });
 }
 
