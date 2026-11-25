@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { RefreshCw } from "lucide-react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -41,16 +42,38 @@ export function WebsiteLogs({ websiteId }: Props) {
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [reloadKey, setReloadKey] = useState(0);
+  // Key of the last request that finished; differs from requestKey while a fetch is in flight.
+  const [settledKey, setSettledKey] = useState<string | null>(null);
+  const requestKey = `${websiteId}:${page}:${reloadKey}`;
+  const isRefreshing = settledKey !== requestKey;
 
   useEffect(() => {
-    setIsLoading(true);
     getMonitorLogs(websiteId, { page, limit: 10 })
       .then((res) => {
         setLogs(res.data);
         setPagination(res.pagination);
       })
-      .finally(() => setIsLoading(false));
-  }, [websiteId, page]);
+      .finally(() => {
+        setIsLoading(false);
+        setSettledKey(`${websiteId}:${page}:${reloadKey}`);
+      });
+  }, [websiteId, page, reloadKey]);
+
+  const refresh = () => setReloadKey((k) => k + 1);
+
+  const refreshButton = (
+    <button
+      type="button"
+      className="btn btn-sm btn-ghost gap-2"
+      onClick={refresh}
+      disabled={isRefreshing}
+      aria-label="Refresh logs"
+    >
+      <RefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} />
+      Refresh
+    </button>
+  );
 
   const chartData = [...logs]
     .reverse()
@@ -74,8 +97,15 @@ export function WebsiteLogs({ websiteId }: Props) {
 
   if (logs.length === 0) {
     return (
-      <div className="text-center py-16 opacity-60">
-        <p className="text-sm">No logs found for this monitor.</p>
+      <div className="text-center py-16 space-y-3">
+        <p className="text-sm font-medium opacity-80">No logs yet.</p>
+        <p className="text-sm opacity-60">
+          The first check usually takes a few seconds. Click Refresh to see the latest logs.
+        </p>
+        <p className="text-xs opacity-50">
+          If the monitor is paused, resume it to start checks.
+        </p>
+        <div>{refreshButton}</div>
       </div>
     );
   }
@@ -115,7 +145,10 @@ export function WebsiteLogs({ websiteId }: Props) {
       </div>
 
       {/* Logs Table */}
-      <p className="text-xs opacity-60">Checked every ~3s</p>
+      <div className="flex items-center justify-between">
+        <p className="text-xs opacity-60">Checked every ~3s</p>
+        {refreshButton}
+      </div>
       <div className="overflow-x-auto rounded-box border">
         <table className="table w-full text-sm">
           <thead>

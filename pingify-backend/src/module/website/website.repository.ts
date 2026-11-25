@@ -25,7 +25,8 @@ export async function createWebsite(
   userId: string,
 ): Promise<WebsiteResponse> {
   const [website] = await db(TABLES.WEBSITES)
-    .insert({ name, url, user_id: userId })
+    // Ping a new website right away instead of waiting for the default random delay.
+    .insert({ name, url, user_id: userId, next_ping_at: db.fn.now() })
     .returning(["id", "name", "url", "is_paused", "created_at"]);
   return website;
 }
