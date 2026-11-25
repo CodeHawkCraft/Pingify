@@ -3,7 +3,7 @@ import env from "../env.ts";
 import type { EmailContent } from "./emailTemplates.ts";
 
 // Email is optional: without SMTP creds alerts are still recorded, just not emailed.
-let mailer =
+const mailer =
   env.SMTP_USER && env.SMTP_PASS
     ? nodemailer.createTransport({
         service: "gmail",
@@ -11,8 +11,6 @@ let mailer =
       })
     : null;
 
-// for testing purpose
-mailer=null;
 if (!mailer) console.warn("SMTP_USER/SMTP_PASS not set: alerts will be recorded but not emailed");
 
 export const canSendEmail = mailer !== null;
